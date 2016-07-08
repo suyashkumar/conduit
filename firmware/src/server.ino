@@ -2,18 +2,18 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
 #include <wifi_info.h> // comment this out and fill in the below two lines
 #include <PubSubClient.h>
 
+#define LED D2
 //const char* ssid = "mywifi";
 //const char* password = "";
 
-MDNSResponder mdns;
+
 ESP8266WebServer server(80);
 WiFiClient client;
 PubSubClient pClient(client);
-const char* mqtt_server = "10.0.0.98";
+const char* mqtt_server = "home.suyash.io";
 const char* name = "suyash";
 void handleRoot() {
   server.send(200, "text/plain", "hello from esp8266!");
@@ -56,29 +56,38 @@ void reconnect() {
     }
   }
 }
+void handleLED(char* payloadStr){
+  Serial.print(payloadStr);
+  if (strcmp(payloadStr, "LED_ON")==0){
+    Serial.print("on");
+    digitalWrite(LED,HIGH);
+  }
+  else if(strcmp(payloadStr,"LED_OFF")==0){
+    digitalWrite(LED,LOW);
+  }
+
+}
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
+  char payloadStr[length];
+  Serial.println(length);
   for (int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
+    payloadStr[i]=(char)payload[i];
   }
   Serial.println();
   if (strcmp(topic,name)==0){
     Serial.print("Stuff Happened");
-    digitalWrite(D2,HIGH);
+    digitalWrite(LED,HIGH);
+    handleLED(payloadStr);
   }
 }
 
-
-void setup(void){
-
-  Serial.begin(115200);
-  pinMode(D2, OUTPUT);
+void startWIFI(){
   WiFi.begin(ssid, password);
   Serial.println("");
-
-
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -90,43 +99,43 @@ void setup(void){
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  if (mdns.begin("esp8266", WiFi.localIP())) {
-    Serial.println("MDNS responder started");
-  }
-  // Server Routes:
+}
+
+void setup(void){
+  Serial.begin(115200); // Start serial
+  pinMode(LED, OUTPUT); // Set LED pin to output
+
+  startWIFI(); // Config/start wifi
+  // Begin local server routes
   server.on("/", handleRoot);
 
-  server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
-  });
   server.on("/redir", [](){
     server.sendHeader("Location", "http://suyashkumar.com/#"+WiFi.localIP().toString());
     server.send(302, "text/plain", "Location: http://suyashkumar.com/#"+WiFi.localIP());
   });
   server.on("/on", [](){
-    digitalWrite(D2, HIGH);
+    digitalWrite(LED, HIGH);
     server.send(200,"text/plain","LED ON");
   });
   server.on("/off",[](){
-    digitalWrite(D2,LOW);
+    digitalWrite(LED,LOW);
     server.send(200,"text/plain","LED OFF");
   });
-
+  // Set up server
   server.onNotFound(handleNotFound);
-
   server.begin();
   Serial.println("HTTP server started");
-
+  // Set up MQTT:
   pClient.setServer(mqtt_server, 1883);
   pClient.setCallback(callback);
 }
 
 
 void loop(void){
-  server.handleClient();
+  server.handleClient(); // Handle local server clients
+  // Ensure MQTT connection is alive
   if (!pClient.connected()) {
     reconnect();
   }
-  pClient.loop();
-
+  pClient.loop(); // Handle MQTT
 }
