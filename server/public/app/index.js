@@ -6,20 +6,36 @@ import ToggleButtons from './components/toggle_buttons';
 class App extends Component{
 	constructor(props){
 		super(props);
-
+		this.state={'ledOn':false}
+		this.stateChanged = this.stateChanged.bind(this);
+	}
+	stateChanged(checked){
+		this.setState({'ledOn':checked})
+		console.log('state changed');
 	}
 	render(){
 		return (
 			<div>
-				<div className="well text-center" style={{"margin-top":"20px"}}>
+				<div className="well row text-center" style={{"margin-top":"20px"}}>
 					<h1>Home Auto Test</h1>
 				</div>
-			<div className="row">
 
 				<ToggleButtons
 					endpoint="suyash"
-					func="led" />
-			</div>
+					func="led"
+					iChanged={this.stateChanged}/>
+
+
+				<MuiThemeProvider>
+					<ToggleSwitch
+						endpoint="suyash"
+						func="led"
+						checked={this.state.ledOn}
+						iChanged={this.stateChanged}/>
+
+				</MuiThemeProvider>
+
+
 
 	</div>
 		)

@@ -7,14 +7,16 @@ const styles = {
   },
   toggle: {
     marginBottom: 16,
-    maxWidth:300,
-    minWidth:200
+    margin: '0 auto',
+    width:'100%',
+    display: 'inline-block'
   },
 };
 
 export default class ToggleSwitch extends Component{
     constructor(props){
       super(props);
+      this.state = {'Toggled':this.props.checked};
       this.onToggled = this.onToggled.bind(this);
     }
     onToggled(event, checked){
@@ -24,15 +26,24 @@ export default class ToggleSwitch extends Component{
       }else{
         axios.get(`http://home.suyash.io/${this.props.endpoint}/${this.props.func}/off`);
       }
-
+      this.setState({'Toggled':checked});
+      console.log('Toggle State is',checked);
+      this.props.iChanged(checked);
     }
     render(){
+      //this.setState({'Toggled':this.props.checked});
+      console.log(this.props.checked);
       return (
-        <div className="text-center col-sm-4 ">
+        <div className="row">
+        <div className="text-center col-sm-4 col-sm-offset-4" style={{display:'flex',"justifyContent":'center', "alignItems":"center"}}>
+        <div>
         <Toggle
         styles={styles.toggle}
         onToggle={this.onToggled}
+        toggled = {this.props.checked}
         />
+        </div>
+        </div>
         </div>
 
       )
