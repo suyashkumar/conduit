@@ -28,11 +28,12 @@ export default class ToggleSwitch extends Component{
     }
     render(){
       return (
+        <div className="text-center col-sm-4 ">
         <Toggle
-        label={this.props.endpoint}
         styles={styles.toggle}
         onToggle={this.onToggled}
         />
+        </div>
 
       )
     }

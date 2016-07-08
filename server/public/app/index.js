@@ -10,14 +10,18 @@ class App extends Component{
 	}
 	render(){
 		return (
+			<div>
+				<div className="well text-center" style={{"margin-top":"20px"}}>
+					<h1>Home Auto Test</h1>
+				</div>
 			<div className="row">
-
 
 				<ToggleButtons
 					endpoint="suyash"
 					func="led" />
-		</div>
+			</div>
 
+	</div>
 		)
 	}
 }
