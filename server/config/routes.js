@@ -18,7 +18,7 @@ app.get('/suyash/led/:status', function(req,res){
     qos: 0,
     retain: false
   }
-  if (!(req.params.status == "on" && req.params.status=="off")){
+  if (!(req.params.status == "on" || req.params.status=="off")){
     res.send("ERR");
   }
   else{
@@ -26,4 +26,5 @@ app.get('/suyash/led/:status', function(req,res){
     res.send("Done");
   }
 
+});
 }
