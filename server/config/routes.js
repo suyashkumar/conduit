@@ -11,7 +11,7 @@ app.get('/send/:topic/:payload', function(req,res){
   });
 	res.send('sent');
 });
-app.get('/suyash/led/:status', function(req,res)){
+app.get('/suyash/led/:status', function(req,res){
   var message = {
     topic: 'suyash',
     payload: (req.params.status==="on") ? "LED_ON" : "LED_OFF",
