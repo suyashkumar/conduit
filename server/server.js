@@ -51,7 +51,7 @@ serverA.on('clientConnected', function(client){
 
  // Set up static content
  app.use(express.static(__dirname + '/node_modules')); // client-side frameworks
- app.use(express.static(__dirname + '/public')); // HTML, CSS
+ app.use(express.static(__dirname + '/public/dist/')); // HTML, CSS
 
  // Set up favicon
  //app.use(favicon(__dirname + '/public/favicon.ico'));
