@@ -4,44 +4,10 @@
  var express = require('express');
  var app = express();
  var server = require('http').Server(app);
-/*
- var net = require('net');
- var mqttConn = require('mqtt-connection');
- var serverA = net.Server();
- serverA.listen(1883, function(){
- 	console.log(serverA.address());
- });
-
- serverA.on('connection', function(stream){
-	var conn = mqttConn(stream);
-	console.log('New Connection');
-	conn.publish
- });
-*/
-var mosca = require('mosca');
-var settings = {
-	port: 1883
-}
-var serverA = new mosca.Server(settings);
-
-serverA.on('clientConnected', function(client){
-	console.log(client.id);
-  var message = {
-    topic: '/lights',
-    payload: 'abc',
-    qos:0,
-    retain:false
-  }
-  serverA.publish(message, function(){
-    console.log('done');
-  });
-});
 
  // Load libraries
  var bodyParser = require('body-parser');
  var morgan = require('morgan');
-
-
  // Set up logging
  app.use(morgan('dev'));
 
@@ -58,9 +24,9 @@ serverA.on('clientConnected', function(client){
 
  // Connect to Mongodb
  require('./config/db')();
-
+ var mqServer = require('./mqtt-start.js');
  // Set up app routes
- require('./config/routes')(app, serverA);
+ require('./config/routes')(app, mqServer);
 
 
  exports = module.exports = app;

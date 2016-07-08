@@ -13,7 +13,8 @@
 ESP8266WebServer server(80);
 WiFiClient client;
 PubSubClient pClient(client);
-const char* mqtt_server = "home.suyash.io";
+//const char* mqtt_server = "home.suyash.io";
+const char* mqtt_server = "10.0.0.98";
 const char* name = "suyash";
 void handleRoot() {
   server.send(200, "text/plain", "hello from esp8266!");
@@ -47,6 +48,7 @@ void reconnect() {
       // ... and resubscribe
       pClient.subscribe("inTopic");
       pClient.subscribe(name);
+      pClient.subscribe("suyash/status");
     } else {
       Serial.print("failed, rc=");
       Serial.print(pClient.state());
@@ -82,6 +84,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("Stuff Happened");
     digitalWrite(LED,HIGH);
     handleLED(payloadStr);
+  }
+  else if(strcmp(topic,"suyash/status")==0){
+    Serial.print("Status");
+    pClient.publish("status","hi");
   }
 }
 
