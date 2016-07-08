@@ -14,7 +14,7 @@ ESP8266WebServer server(80);
 WiFiClient client;
 PubSubClient pClient(client);
 const char* mqtt_server = "10.0.0.98";
-
+const char* name = "suyash";
 void handleRoot() {
   server.send(200, "text/plain", "hello from esp8266!");
 }
@@ -46,7 +46,7 @@ void reconnect() {
       pClient.publish("outTopic", "hello world");
       // ... and resubscribe
       pClient.subscribe("inTopic");
-      pClient.subscribe("/lights");
+      pClient.subscribe(name);
     } else {
       Serial.print("failed, rc=");
       Serial.print(pClient.state());
@@ -64,13 +64,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
+  if (strcmp(topic,name)==0){
+    Serial.print("Stuff Happened");
+    digitalWrite(D2,HIGH);
+  }
 }
 
 
 void setup(void){
 
   Serial.begin(115200);
-
+  pinMode(D2, OUTPUT);
   WiFi.begin(ssid, password);
   Serial.println("");
 

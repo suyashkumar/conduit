@@ -2,10 +2,10 @@ module.exports = function(app, serverA) {
  app.get('/hello', function(req,res){
  res.send('hello');
  });
-app.get('/send', function(req,res){
+app.get('/send/:topic/:payload', function(req,res){
 	var message = {
-		topic: 'inTopic',
-		payload: 'abc',
+		topic: req.params.topic,
+		payload: req.params.payload,
 		qos:0,
 		retain:false
 	}
