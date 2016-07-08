@@ -22,9 +22,9 @@ export default class ToggleSwitch extends Component{
     onToggled(event, checked){
       console.log(checked);
       if (checked){
-        axios.get(`http://home.suyash.io/${this.props.endpoint}/${this.props.func}/on`);
+        axios.get(`http://home.suyash.io/devices/${this.props.endpoint}/${this.props.func}/on`);
       }else{
-        axios.get(`http://home.suyash.io/${this.props.endpoint}/${this.props.func}/off`);
+        axios.get(`http://home.suyash.io/devices/${this.props.endpoint}/${this.props.func}/off`);
       }
       this.setState({'Toggled':checked});
       console.log('Toggle State is',checked);
