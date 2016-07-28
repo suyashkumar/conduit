@@ -4,6 +4,7 @@
 #include <ESP8266WebServer.h>
 #include <wifi_info.h> // comment this out and fill in the below two lines
 #include <PubSubClient.h>
+#include <HomeAuto.h>
 
 #define LED D2
 //const char* ssid = "mywifi";
@@ -13,6 +14,7 @@
 ESP8266WebServer server(80);
 WiFiClient client;
 PubSubClient pClient(client);
+HomeAuto homeAuto;
 //const char* mqtt_server = "home.suyash.io";
 const char* mqtt_server = "10.0.0.98";
 const char* name = "suyash";
@@ -36,28 +38,8 @@ void handleNotFound(){
   server.send(404, "text/plain", message);
 
 }
-void reconnect() {
-  // Loop until we're reconnected
-  while (!pClient.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (pClient.connect("ESP8266Client")) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      pClient.publish("outTopic", "hello world");
-      // ... and resubscribe
-      pClient.subscribe("inTopic");
-      pClient.subscribe(name);
-      pClient.subscribe("suyash/status");
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(pClient.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-    }
-  }
-}
+
+
 void handleLED(char* payloadStr){
   Serial.print(payloadStr);
   if (strcmp(payloadStr, "LED_ON")==0){
@@ -67,8 +49,8 @@ void handleLED(char* payloadStr){
   else if(strcmp(payloadStr,"LED_OFF")==0){
     digitalWrite(LED,LOW);
   }
-
 }
+
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -106,12 +88,31 @@ void startWIFI(){
   Serial.println(WiFi.localIP());
 
 }
-
+void msgCallback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("HI Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  char payloadStr[length];
+  Serial.println(length);
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+    payloadStr[i]=(char)payload[i];
+  }
+  homeAuto.callHandler(payloadStr);
+  Serial.println();
+}
+int a(){
+  Serial.println("hi");
+}
+int b(){
+  Serial.println("hib");
+}
 void setup(void){
   Serial.begin(115200); // Start serial
   pinMode(LED, OUTPUT); // Set LED pin to output
 
   startWIFI(); // Config/start wifi
+
   // Begin local server routes
   server.on("/", handleRoot);
 
@@ -132,16 +133,21 @@ void setup(void){
   server.begin();
   Serial.println("HTTP server started");
   // Set up MQTT:
-  pClient.setServer(mqtt_server, 1883);
-  pClient.setCallback(callback);
+  //pClient.setServer(mqtt_server, 1883);
+  //pClient.setCallback(callback);
+  //homeAuto.setCallback(msgCallback);
+  char name[20];
+  strcpy(name,"hi");
+  homeAuto.addHandler("hi", &a);
+  homeAuto.callHandler("hi");
+  homeAuto.addHandler("turnLEDOn", &b);
+  homeAuto.callHandler("namet");
+  homeAuto.setClient(pClient);
+
 }
 
 
 void loop(void){
   server.handleClient(); // Handle local server clients
-  // Ensure MQTT connection is alive
-  if (!pClient.connected()) {
-    reconnect();
-  }
-  pClient.loop(); // Handle MQTT
+  homeAuto.handle();
 }

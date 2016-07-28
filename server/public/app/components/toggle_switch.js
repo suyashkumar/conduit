@@ -38,9 +38,9 @@ export default class ToggleSwitch extends Component{
         <div className="text-center col-sm-4 col-sm-offset-4" style={{display:'flex',"justifyContent":'center', "alignItems":"center"}}>
         <div>
         <Toggle
-        styles={styles.toggle}
-        onToggle={this.onToggled}
-        toggled = {this.props.checked}
+          styles={styles.toggle}
+          onToggle={this.onToggled}
+          toggled = {this.props.checked}
         />
         </div>
         </div>

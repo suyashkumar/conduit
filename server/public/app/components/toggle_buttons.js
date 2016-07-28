@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
-
 export default class ToggleSwitch extends Component{
     constructor(props){
       super(props);

@@ -23,4 +23,4 @@ mqServer.on('published', function(packet,client){
     console.log(client.id);
   }
 });
-module.exports=mqServer;
+module.exports=mqServer; // Export the init'd mqServer object 
