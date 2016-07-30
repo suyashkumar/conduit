@@ -1,12 +1,19 @@
-#include "HomeAuto.h"
-#include <map>
+/*
+HomeAuto.cpp
+A library that handles ESP8266 communication with a server (even on private
+networks). Consumers of this library can simply write functions and have them
+be fired whenver the server fires a given event directed at this device. There is
+a 1-1 mapping of event to function. For example the "led" event may fire the
+ledToggle function on the device. The communication needed to get that event to the
+device and decide what funciton to all is abstracted away entirely by this library.
 
-typedef int (*handler)();
+@author: Suyash Kumar <suyashkumar2003@gmail.com>
+*/
+#include "HomeAuto.h"
+
+//const char* mqtt_server = "home.suyash.io";
 const char* _mqtt_server = "10.0.0.98";
 const char* _name = "suyash";
-void msgCallback(char* topic, byte* payload, unsigned int length);
-void reconnect();
-void removeSpace(char* s);
 
 typedef struct node {
   handler f;
@@ -18,15 +25,13 @@ node_t* root;
 node_t* current;
 
 HomeAuto::HomeAuto(){
+  // Init linked list
   root = (node_t *)malloc(sizeof(node_t));
   root->next=0;
-  root->name="lol";
+  root->name="ROOT"; // reserved name for root node (for now)
   current = root;
 }
-HomeAuto::HomeAuto(PubSubClient& client){
-  setClient(client);
 
-}
 void HomeAuto::addHandler(const char* name, handler f){
   node *newNode = (node_t*) malloc(sizeof(node_t));
   newNode->f = f;
@@ -35,11 +40,12 @@ void HomeAuto::addHandler(const char* name, handler f){
   current->next=newNode;
   current=newNode;
 }
+
 void HomeAuto::callHandler(const char* name){
   node_t* currentInSearch = root;
   while(true){
     if (strcmp(name, currentInSearch->name)==0){
-      currentInSearch->f(); // Call function
+      currentInSearch->f(); // Call function assoc with handler
       break;
     }
     if(currentInSearch->next == 0){
@@ -48,43 +54,33 @@ void HomeAuto::callHandler(const char* name){
     currentInSearch = currentInSearch->next;
   }
 }
+
 HomeAuto& HomeAuto::setClient(PubSubClient& client){
   this->_client = &client;
   client.setServer(_mqtt_server, 1883);
   //client.setCallback(msgCallback);
   client.setCallback([&](char* topic, byte* payload, unsigned int length){
-    Serial.print("HI Message arrived [");
+    Serial.print("Message arrived [");
     Serial.print(topic);
     Serial.print("] ");
     char payloadStr[length];
-    Serial.println(length);
     for (int i = 0; i < length; i++) {
-      Serial.print((char)payload[i]);
       payloadStr[i]=(char)payload[i];
     }
     removeSpace(payloadStr);
     Serial.println(payloadStr);
-    this->callHandler(payloadStr);
-    this->callHandler("hi");
-    Serial.println();
-
+    this->callHandler(payloadStr); // Call function assoc with this handler
   });
   return *this;
 }
+
 void HomeAuto::handle(){
   if (!this->_client->connected()){
     this->reconnect();
   }
   this->_client->loop();
 }
-void removeSpace(char* s)
-{
-    for (char* s2 = s; *s2; ++s2) {
-        if (*s2 != ' ')
-            *s++ = *s2;
-    }
-    *s = 0;
-}
+
 void HomeAuto::reconnect() {
   // Loop until we're reconnected
   while (!this->_client->connected()) {
@@ -95,8 +91,7 @@ void HomeAuto::reconnect() {
       // Once connected, publish an announcement...
       this->_client->publish("outTopic", "hello world");
       // Suscribe to topics:
-      this->_client->subscribe(_name);
-      this->_client->subscribe("suyash/status");
+      this->_client->subscribe(_name); // suscribe to events meant for this device
     } else {
       Serial.print("failed, rc=");
       Serial.print(this->_client->state());
@@ -105,4 +100,12 @@ void HomeAuto::reconnect() {
       delay(5000);
     }
   }
+}
+
+void removeSpace(char* s) {
+    for (char* s2 = s; *s2; ++s2) {
+        if (*s2 != ' ')
+            *s++ = *s2;
+    }
+    *s = 0;
 }
