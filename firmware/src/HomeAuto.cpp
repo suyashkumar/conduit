@@ -12,8 +12,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 #include "HomeAuto.h"
 
 //const char* mqtt_server = "home.suyash.io";
-const char* _mqtt_server = "10.0.0.98";
-const char* _name = "suyash";
+//const char* _mqtt_server; // = "10.0.0.98";
+//const char* _name;
 
 typedef struct node {
   handler f;
@@ -24,7 +24,11 @@ typedef struct node {
 node_t* root;
 node_t* current;
 
-HomeAuto::HomeAuto(){
+HomeAuto::HomeAuto(const char* name, const char* server){
+  // Set name and server
+  this->_name = name;
+  this->_mqtt_server = server;
+
   // Init linked list
   root = (node_t *)malloc(sizeof(node_t));
   root->next=0;
@@ -57,7 +61,7 @@ void HomeAuto::callHandler(const char* name){
 
 HomeAuto& HomeAuto::setClient(PubSubClient& client){
   this->_client = &client;
-  client.setServer(_mqtt_server, 1883);
+  client.setServer(this->_mqtt_server, 1883);
   //client.setCallback(msgCallback);
   client.setCallback([&](char* topic, byte* payload, unsigned int length){
     Serial.print("Message arrived [");
@@ -91,7 +95,7 @@ void HomeAuto::reconnect() {
       // Once connected, publish an announcement...
       this->_client->publish("outTopic", "hello world");
       // Suscribe to topics:
-      this->_client->subscribe(_name); // suscribe to events meant for this device
+      this->_client->subscribe(this->_name); // suscribe to events meant for this device
     } else {
       Serial.print("failed, rc=");
       Serial.print(this->_client->state());

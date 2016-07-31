@@ -13,7 +13,7 @@
 
 WiFiClient client;
 PubSubClient pClient(client);
-HomeAuto homeAuto;
+HomeAuto homeAuto("suyash", "10.0.0.98"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
 
 int ledToggle(){

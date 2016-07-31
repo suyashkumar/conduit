@@ -21,8 +21,10 @@ void removeSpace(char* s);
 class HomeAuto {
 private:
   PubSubClient* _client; // The mqtt client
+  const char* _mqtt_server;
+  const char* _name;
 public:
-  HomeAuto();
+  HomeAuto(const char* name, const char* server);
   HomeAuto& setClient(PubSubClient& client);
   void addHandler(const char* name, handler f);
   void callHandler(const char* name);
