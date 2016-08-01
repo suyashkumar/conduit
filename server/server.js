@@ -19,9 +19,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/node_modules')); // client-side frameworks
 app.use(express.static(__dirname + '/public/dist/')); // HTML, CSS
 
-// Set up favicon
-// app.use(favicon(__dirname + '/public/favicon.ico'));
-
 // Connect to Mongodb
 require('./config/db')();
 
@@ -31,8 +28,6 @@ var mqServer = require('./mqtt-start.js');
 // Set up app routes
 require('./config/routes')(app, mqServer);
 
-
-exports = module.exports = app;
 if (!module.parent) {
   var port = process.env.PORT || 9000; // 9000 as default
   // On Linux make sure you have root to open port 80
@@ -40,3 +35,5 @@ if (!module.parent) {
     console.log('Listening on port ' + port);
   });
 }
+
+exports = module.exports = app;
