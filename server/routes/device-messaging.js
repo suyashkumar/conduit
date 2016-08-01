@@ -1,15 +1,11 @@
-var deviceMap = {
-  'suyash': {
-    functions: ['led']
-  }
-}
+const RESPONSE_WAIT_TIME = 2000; // in ms
 module.exports=function(mqServer){
   return {
     // Send generic messages given a topic or a payload
-    sendMessage: function(req,res){
+    sendMessage: function(req, res){
       var message = {
     		topic: req.params.topic,
-    		payload: req.params.payload,
+    		payload: req.params.payload.trim(),
     		qos:0,
     		retain:false
     	}
@@ -18,24 +14,32 @@ module.exports=function(mqServer){
       });
     	res.send('sent');
     },
-    callFunc: function(req,res){
-      var message = {
-        topic: req.params.device_name,
-        payload: (req.params.status==="on") ? "LED_ON" : "LED_OFF",
-        qos: 0,
-        retain: false
-      }
-      if (!(req.params.status == "on" || req.params.status=="off")){
-        res.send("ERR");
-      }
-      else{
-        mqServer.publish(message);
-        res.send("Done");
-      }
-    },
-    listDevices: function(req,res){
-      res.json(deviceMap);
 
+    // Send generic message to a device with a payload function, also wait for a response from the device
+    sendMessageWithResponse: function(req, res){
+      var message = {
+    		topic: req.params.topic,
+    		payload: req.params.payload,
+    		qos:0,
+    		retain:false
+    	}
+      // Publish message to client (req.params.topic),
+      // wait to recieve message back from client and return it back
+    	mqServer.publish(message , function(){
+          mqServer.on('published', function(packet, client) {
+            // If message from client of this request, return that message as response
+            if (client && client.id.trim() === req.params.topic.trim()) {
+              if(!res.headersSent) res.json(packet.payload.toString());
+            }
+          });
+      });
+      // If the device response callback above doesn't fire,
+      // this will fire and respond with and error after RESPONSE_WAIT_TIME
+      setTimeout(function(){
+        console.log(res.headersSent);
+        if (!res.headersSent) res.status(504).json("ERROR--no response received");
+      }, RESPONSE_WAIT_TIME);
     }
+
   }
 }

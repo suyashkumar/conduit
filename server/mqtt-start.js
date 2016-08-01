@@ -1,8 +1,8 @@
 var mosca = require('mosca');
 var settings = {
 	port: 1883
-}
-var mqServer = new mosca.Server(settings);
+};
+var mqServer = new mosca.Server(settings); // Init a mosca mqtt server
 
 mqServer.on('clientConnected', function(client){
 	console.log(client.id);
@@ -16,6 +16,7 @@ mqServer.on('clientConnected', function(client){
     console.log('done');
   });
 });
+
 mqServer.on('published', function(packet,client){
   console.log("Client:","Published",packet.payload.toString());
   console.log(packet.payload);
@@ -23,4 +24,5 @@ mqServer.on('published', function(packet,client){
     console.log(client.id);
   }
 });
-module.exports=mqServer; // Export the init'd mqServer object 
+
+module.exports=mqServer; // Export the init'd mqServer object

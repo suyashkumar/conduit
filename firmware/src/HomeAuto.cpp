@@ -9,11 +9,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 
 @author: Suyash Kumar <suyashkumar2003@gmail.com>
 */
-#include "HomeAuto.h"
 
-//const char* mqtt_server = "home.suyash.io";
-//const char* _mqtt_server; // = "10.0.0.98";
-//const char* _name;
+#include "HomeAuto.h"
 
 typedef struct node {
   handler f;
@@ -62,15 +59,15 @@ void HomeAuto::callHandler(const char* name){
 HomeAuto& HomeAuto::setClient(PubSubClient& client){
   this->_client = &client;
   client.setServer(this->_mqtt_server, 1883);
-  //client.setCallback(msgCallback);
   client.setCallback([&](char* topic, byte* payload, unsigned int length){
     Serial.print("Message arrived [");
     Serial.print(topic);
     Serial.print("] ");
     char payloadStr[length];
     for (int i = 0; i < length; i++) {
-      payloadStr[i]=(char)payload[i];
+      payloadStr[i] = (char)payload[i];
     }
+    payloadStr[length] = 0; // Null terminate payloadStr
     removeSpace(payloadStr);
     Serial.println(payloadStr);
     this->callHandler(payloadStr); // Call function assoc with this handler
@@ -90,7 +87,7 @@ void HomeAuto::reconnect() {
   while (!this->_client->connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (this->_client->connect("ESP8266Client")) {
+    if (this->_client->connect(this->_name)) {
       Serial.println("connected");
       // Once connected, publish an announcement...
       this->_client->publish("outTopic", "hello world");
@@ -104,6 +101,14 @@ void HomeAuto::reconnect() {
       delay(5000);
     }
   }
+}
+
+void HomeAuto::publishMessage(const char* message){
+  char str[20];
+  strcpy(str, this->_name);
+  strcat(str, "/device");
+  const char* topicName = str;
+  this->_client->publish(topicName, message);
 }
 
 void removeSpace(char* s) {

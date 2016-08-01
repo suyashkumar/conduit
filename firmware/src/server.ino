@@ -1,3 +1,14 @@
+/*
+server.ino
+Example for my library that handles ESP8266 communication with a server (even on private
+networks). Consumers of this library can simply write functions and have them
+be fired whenver the server fires a given event directed at this device. There is
+a 1-1 mapping of event to function. For example the "led" event may fire the
+ledToggle function on the device. The communication needed to get that event to the
+device and decide what funciton to all is abstracted away entirely by this library.
+
+@author: Suyash Kumar <suyashkumar2003@gmail.com>
+*/
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -16,26 +27,33 @@ PubSubClient pClient(client);
 HomeAuto homeAuto("suyash", "10.0.0.98"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
 
-int ledToggle(){
-  digitalWrite(LED, (ledStatus) ? LOW : HIGH);
-  ledStatus = (ledStatus) ? 0 : 1;
-  Serial.println("Toggled");
-}
-
 void startWIFI(){
   WiFi.begin(ssid, password);
   Serial.println("");
+
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
+}
+
+int ledToggle(){
+  digitalWrite(LED, (ledStatus) ? LOW : HIGH);
+  ledStatus = (ledStatus) ? 0 : 1;
+  Serial.println("Toggled");
+  homeAuto.publishMessage((ledStatus) ? "LED ON" : "LED OFF");
+}
+
+int publishMessage(){
+    homeAuto.publishMessage("hey there");
 }
 
 void setup(void){
@@ -46,6 +64,7 @@ void setup(void){
 
   // HomeAuto bindings
   homeAuto.addHandler("ledToggle", &ledToggle);
+  homeAuto.addHandler("hello", &publishMessage);
   homeAuto.setClient(pClient);
 
 }

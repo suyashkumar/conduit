@@ -31,5 +31,5 @@ public:
   void handle();
   void reconnect();
   void msgCallback(char* topic, byte* payload, unsigned int length);
-
+  void publishMessage(const char* message);
 };
