@@ -1,6 +1,5 @@
 
- // Set up Express.js
-
+// Set up Express.js
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -8,6 +7,7 @@ var server = require('http').Server(app);
 // Load libraries
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
+
 // Set up logging
 app.use(morgan('dev'));
 

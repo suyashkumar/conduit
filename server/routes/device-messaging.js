@@ -15,7 +15,8 @@ module.exports=function(mqServer){
     	res.send('sent');
     },
 
-    // Send generic message to a device with a payload function, also wait for a response from the device
+    // Send generic message to a device with a payload (specifying a remote function),
+    // also wait for a response from the device
     sendMessageWithResponse: function(req, res){
       var message = {
     		topic: req.params.topic,
@@ -34,7 +35,7 @@ module.exports=function(mqServer){
           });
       });
       // If the device response callback above doesn't fire,
-      // this will fire and respond with and error after RESPONSE_WAIT_TIME
+      // this will fire and respond with an error after RESPONSE_WAIT_TIME
       setTimeout(function(){
         console.log(res.headersSent);
         if (!res.headersSent) res.status(504).json("ERROR--no response received");
