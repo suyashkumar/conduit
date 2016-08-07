@@ -1,1 +1,3 @@
-/src/wifi_info.h
+.pioenvs
+.clang_complete
+.gcc-flags.json
