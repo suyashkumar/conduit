@@ -25,8 +25,7 @@ require('./config/db')();
 // Set up MQTT Home Automation connections
 var mqServer = require('./mqtt-start.js');
 var DeviceEventRouter = require('./device-event-router.js');
-var myDeviceEventRouter = new DeviceEventRouter(mqServer);
-console.log(myDeviceEventRouter.register);
+var myDeviceEventRouter = new DeviceEventRouter(mqServer); 
 
 // Set up app routes
 require('./config/routes')(app, mqServer, myDeviceEventRouter);
