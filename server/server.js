@@ -24,9 +24,12 @@ require('./config/db')();
 
 // Set up MQTT Home Automation connections
 var mqServer = require('./mqtt-start.js');
+var DeviceEventRouter = require('./device-event-router.js');
+var myDeviceEventRouter = new DeviceEventRouter(mqServer);
+console.log(myDeviceEventRouter.register);
 
 // Set up app routes
-require('./config/routes')(app, mqServer);
+require('./config/routes')(app, mqServer, myDeviceEventRouter);
 
 if (!module.parent) {
   var port = process.env.PORT || 9000; // 9000 as default

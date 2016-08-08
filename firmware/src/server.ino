@@ -25,6 +25,7 @@ device and decide what funciton to all is abstracted away entirely by this libra
 WiFiClient client;
 PubSubClient pClient(client);
 HomeAuto homeAuto("suyash", "10.0.0.98"); // or "suyash", "home.suyash.io"
+//HomeAuto homeAuto("suyash", "home.suyash.io"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
 
 void startWIFI(){

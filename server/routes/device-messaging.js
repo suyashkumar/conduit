@@ -1,5 +1,5 @@
 const RESPONSE_WAIT_TIME = 2000; // in ms
-module.exports=function(mqServer){
+module.exports=function(mqServer, myDeviceEventRouter){
   return {
     // Send generic messages given a topic or a payload
     sendMessage: function(req, res){
@@ -24,17 +24,20 @@ module.exports=function(mqServer){
     		qos:0,
     		retain:false
     	}
-      // Publish message to client (req.params.topic),
-      // wait to recieve message back from client and return it back
-    	mqServer.publish(message , function(){
-          mqServer.on('published', function(packet, client) {
-            // If message from client of this request, return that message as response
-            if (client && client.id.trim() === req.params.topic.trim()) {
-              if(!res.headersSent) res.json(packet.payload.toString());
-            }
-          });
-      });
-      // If the device response callback above doesn't fire,
+		
+		// Function to be called when device responds to this RPC
+		var onDevicePublish = function(packet, client){
+			// If message from client of this request, return that message as response
+			if (client && client.id.trim() === req.params.topic.trim()) {
+				if(!res.headersSent) res.json(packet.payload.toString());
+			} 
+	  	};
+
+		// Register onDevicePublish to be called when the current device publishes data,
+		// then publish the RPC message to the device. 
+		myDeviceEventRouter.register(req.params.topic + "/device", onDevicePublish, () => (mqServer.publish(message))); 
+
+      // If the device response callback above (onDevicePublish) doesn't fire,
       // this will fire and respond with an error after RESPONSE_WAIT_TIME
       setTimeout(function(){
         console.log(res.headersSent);
