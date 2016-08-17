@@ -6,11 +6,8 @@ var server = require('http').Server(app);
 
 // Load libraries
 var bodyParser = require('body-parser');
-var morgan = require('morgan');
-var passport = require('passport');
-var flash = require('connect-flash');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
+var morgan = require('morgan'); 
+var jwt = require('jsonwebtoken');
 
 // Set up logging
 app.use(morgan('dev'));
@@ -25,16 +22,11 @@ app.use(express.static(__dirname + '/public/build')); // HTML, CSS
 
 // Passport requirements
 var secret = require('./secret.js').secret;
-app.use(session({secret: secret }));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
+app.set('superSecret', secret); 
 
 // Connect to Mongodb
 require('./config/db')();
 
-// Config passport
-require('./config/passport')(passport);
 
 // Set up MQTT Home Automation connections
 var mqServer = require('./mqtt-start.js');
@@ -42,7 +34,7 @@ var DeviceEventRouter = require('./device-event-router.js');
 var myDeviceEventRouter = new DeviceEventRouter(mqServer); 
 
 // Set up app routes
-require('./config/routes')(app, mqServer, myDeviceEventRouter, passport);
+require('./config/routes')(app, mqServer, myDeviceEventRouter, jwt);
 
 if (!module.parent) {
   var port = process.env.PORT || 9000; // 9000 as default
