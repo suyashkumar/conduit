@@ -8,9 +8,15 @@ var User = require('../models/user');
 module.exports = function(app, mqServer, myDeviceEventRouter, jwt) { 
 	var deviceMessaging = require('../routes/device-messaging')(mqServer, myDeviceEventRouter);
 	var authRoutes = require('../routes/auth.js');
+	app.use(function(req, res, next) {
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token"); 
+		next();
+	});
+
   	// Route Table
-	app.get('/sendOnly/:topic/:payload', deviceMessaging.sendMessage);
-	app.get('/send/:topic/:payload', deviceMessaging.sendMessageWithResponse); 
+	app.get('/sendOnly/:topic/:payload', needsAuth, deviceMessaging.sendMessage);
+	app.get('/send/:topic/:payload', needsAuth, deviceMessaging.sendMessageWithResponse); 
 
 	app.get('/test', needsAuth, function(req, res) {
 		res.send('Hi ');
@@ -22,10 +28,10 @@ module.exports = function(app, mqServer, myDeviceEventRouter, jwt) {
 		}, function(err, user){
 			if(err) throw err;
 			if(!user) {
-				res.json({success:false});
+				res.status(401).json({success:false});
 			} else if (user) {
-				if(!user.validPassword(req.body.password)) {
-					res.json({success:false});
+				if(!user.validPassword(req.body.password)) { 
+					res.status(401).json({success:false});
 				} else {
 					var token = jwt.sign(user, app.get('superSecret'), {expiresIn: "10h"});
 					res.json({success: true, token:token});
@@ -64,7 +70,7 @@ module.exports = function(app, mqServer, myDeviceEventRouter, jwt) {
 		// verifies secret and checks exp
 		jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
 		  if (err) {
-			return res.json({ success: false, message: 'Failed to authenticate token.' });    
+			return res.status(401).json({ success: false, message: 'Failed to authenticate token.' });    
 		  } else {
 			// if everything is good, save to request for use in other routes
 			req.decoded = decoded;    
@@ -72,8 +78,7 @@ module.exports = function(app, mqServer, myDeviceEventRouter, jwt) {
 		  }
 		});
 
-	  } else {
-
+	  } else { 
 		// if there is no token
 		// return an error
 		return res.status(403).send({ 
@@ -83,18 +88,6 @@ module.exports = function(app, mqServer, myDeviceEventRouter, jwt) {
 		
 	  }
 
-	}
-
-	app.use(function(req, res, next) {
-	   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-		res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"); 
-		next();
-	});
+	} 
 }
-function isLoggedIn(req, res, next) {
-	if (req.isAuthenticated())
-		return next();
-	res.status(401);
-	res.send('Unauthorized');
 
-}
