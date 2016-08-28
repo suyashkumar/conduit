@@ -18,4 +18,4 @@ The basic functionality of this library is straightforward. Start with the provi
   homeAuto.addHandler("ledON", &ledOn);
   ```
 
-  3. Go to `http://home.suyash.io/send/:deviceName/:functionString` and your function will run and any publish messages will be returned in the request response. Note, you must have a valid json web token in a `x-access-token` header. 
+  3. Go to `http://home.suyash.io/send/:deviceName/:functionString` and your function will run and any publish messages will be returned in the request response. Note, you must have a valid json web token in a `x-access-token` header. The :deviceName is set when initializing the HomeAuto object (line 27).
