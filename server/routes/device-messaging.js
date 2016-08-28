@@ -12,7 +12,7 @@ module.exports=function(mqServer, myDeviceEventRouter){
     	mqServer.publish(message, function(){
         console.log('done');
       });
-    	res.send('sent');
+    	res.json({data: 'sent'});
     },
 
     // Send generic message to a device with a payload (specifying a remote function),
@@ -29,7 +29,7 @@ module.exports=function(mqServer, myDeviceEventRouter){
 		var onDevicePublish = function(packet, client){
 			// If message from client of this request, return that message as response
 			if (client && client.id.trim() === req.params.topic.trim()) {
-				if(!res.headersSent) res.json(packet.payload.toString());
+				if(!res.headersSent) res.json({success: true, data: packet.payload.toString()});
 			} 
 	  	};
 
@@ -41,7 +41,7 @@ module.exports=function(mqServer, myDeviceEventRouter){
       // this will fire and respond with an error after RESPONSE_WAIT_TIME
       setTimeout(function(){
         console.log(res.headersSent);
-        if (!res.headersSent) res.status(504).json("ERROR--no response received");
+        if (!res.headersSent) res.status(504).json({success: false, data: "ERROR--no response received"});
       }, RESPONSE_WAIT_TIME);
     }
 
