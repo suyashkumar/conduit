@@ -61,6 +61,11 @@ func SendMessage(device string, payload string) {
 	sendMessage(mClient, device, payload)
 }
 
+func stayAlive() {
+	SendMessage("stayinAlive", "")
+	time.AfterFunc(50*time.Second, stayAlive)
+}
+
 func RunServer() {
 	fmt.Println("Starting up...")
 	svr := &service.Server{
@@ -68,5 +73,5 @@ func RunServer() {
 	}
 	go svr.ListenAndServe("tcp://:1883")
 	mClient = createServerClient()
-	time.AfterFunc(50*time.Second, func() { SendMessage("", "") })
+	go stayAlive()
 }

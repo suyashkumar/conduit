@@ -1,5 +1,3 @@
-// Our first program will print the classic "hello world"
-// message. Here's the full source code.
 package main
 
 import (
@@ -21,10 +19,7 @@ func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	c := make(chan string)
 	end := make(chan string)
 
-	mqtt.Register("suyash1/device", func(topic string, payload string) {
-		fmt.Println("CALLBACK")
-		fmt.Println(topic)
-		fmt.Println(payload)
+	mqtt.Register(ps.ByName("deviceName")+"/device", func(topic string, payload string) {
 		res := &RpcResponse{
 			Success: true,
 			Data:    payload,
