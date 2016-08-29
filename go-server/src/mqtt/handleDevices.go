@@ -8,18 +8,27 @@ import (
 )
 
 var mClient *service.Client
+var handlerMap = make(map[string]func(string, string))
+
+func Register(name string, a func(string, string)) {
+	handlerMap[name] = a
+}
 
 func onPublish(msg *message.PublishMessage) error {
 	fmt.Println("message arrived")
 	fmt.Println(msg.String())
 	fmt.Println(string(msg.Payload()))
+
+	if val, ok := handlerMap[string(msg.Topic())]; ok {
+		val(string(msg.Topic()), string(msg.Payload()))
+	}
 	return nil
 }
 func createServerClient() *service.Client {
 	client := &service.Client{}
 	msg := message.NewConnectMessage()
 	msg.SetClientId([]byte("surgemq"))
-	msg.SetKeepAlive(30)
+	msg.SetKeepAlive(300)
 	msg.SetCleanSession(true)
 	msg.SetWillTopic([]byte("will"))
 	msg.SetWillMessage([]byte("send me home"))
@@ -41,15 +50,15 @@ func createServerClient() *service.Client {
 	return client
 }
 
-func sendMessage(client *service.Client) {
+func sendMessage(client *service.Client, device string, payload string) {
 	pubMsg := message.NewPublishMessage()
-	pubMsg.SetTopic([]byte("suyash1"))
-	pubMsg.SetPayload([]byte("hello"))
+	pubMsg.SetTopic([]byte(device))
+	pubMsg.SetPayload([]byte(payload))
 	client.Publish(pubMsg, nil)
 }
 
-func SendMessage() {
-	sendMessage(mClient)
+func SendMessage(device string, payload string) {
+	sendMessage(mClient, device, payload)
 }
 
 func RunServer() {
@@ -59,6 +68,5 @@ func RunServer() {
 	}
 	go svr.ListenAndServe("tcp://:1883")
 	mClient = createServerClient()
-	time.AfterFunc(100*time.Second, SendMessage)
-
+	time.AfterFunc(50*time.Second, func() { SendMessage("", "") })
 }
