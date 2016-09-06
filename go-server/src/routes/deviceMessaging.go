@@ -14,7 +14,7 @@ type RpcResponse struct {
 	Data    string `json:"data"`
 }
 
-func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
 	mqtt.SendMessage(ps.ByName("deviceName"), ps.ByName("funcName"))
 	c := make(chan string)
 	end := make(chan string)

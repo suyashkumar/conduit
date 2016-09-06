@@ -15,10 +15,11 @@ func Register(name string, a func(string, string)) {
 }
 
 func onPublish(msg *message.PublishMessage) error {
-	fmt.Println("message arrived")
-	fmt.Println(msg.String())
-	fmt.Println(string(msg.Payload()))
-
+	/*
+		fmt.Println("message arrived")
+		fmt.Println(msg.String())
+		fmt.Println(string(msg.Payload()))
+	*/
 	if val, ok := handlerMap[string(msg.Topic())]; ok {
 		val(string(msg.Topic()), string(msg.Payload()))
 	}
@@ -67,11 +68,12 @@ func stayAlive() {
 }
 
 func RunServer() {
-	fmt.Println("Starting up...")
+	fmt.Println("Starting up MQTT machinery...")
 	svr := &service.Server{
 		KeepAlive: 300,
 	}
 	go svr.ListenAndServe("tcp://:1883")
 	mClient = createServerClient()
 	go stayAlive()
+	fmt.Println("Started and listening")
 }
