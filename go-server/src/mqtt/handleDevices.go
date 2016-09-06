@@ -73,6 +73,7 @@ func RunServer() {
 		KeepAlive: 300,
 	}
 	go svr.ListenAndServe("tcp://:1883")
+	time.Sleep(200*time.Millisecond)
 	mClient = createServerClient()
 	go stayAlive()
 	fmt.Println("Started and listening")
