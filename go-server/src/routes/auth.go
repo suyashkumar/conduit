@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var SecretKey = []byte("lolsowow13333ksnvaa")
+var SecretKey = []byte(SECRET)
 
 type HomeAutoClaims struct {
 	Email string `json:"email"`
