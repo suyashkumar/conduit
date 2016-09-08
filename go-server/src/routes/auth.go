@@ -40,6 +40,7 @@ type AuthHandler func(
 func AuthMiddlewareGenerator(next AuthHandler) httprouter.Handle {
 
 	middleware := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		SetCorsHeaders(w)
 		if candidateToken, ok := r.Header["X-Access-Token"]; ok {
 			// Parse and validate token:
 			token, err := jwt.ParseWithClaims(candidateToken[0], &HomeAutoClaims{}, func(token *jwt.Token) (interface{}, error) {
@@ -52,9 +53,11 @@ func AuthMiddlewareGenerator(next AuthHandler) httprouter.Handle {
 			} else {
 				returnError := ErrorResponse{Success: false, Error: err.Error()}
 				resBytes, _ := json.Marshal(returnError)
+				w.WriteHeader(401)
 				w.Header().Set("Content-Type", "application/json")
 				fmt.Fprintf(w, string(resBytes))
 				fmt.Println("there is error")
+				fmt.Println(err.Error())
 				return
 			}
 		}
@@ -115,6 +118,7 @@ func Test(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *Home
 }
 
 func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	SetCorsHeaders(w)
 	u := models.User{}
 	json.NewDecoder(r.Body).Decode(&u)
 
@@ -137,7 +141,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		claims := HomeAutoClaims{
 			candidate.Email,
 			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(time.Minute * 10).Unix(),
+				ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
 				Issuer:    "homeauto",
 			},
 		}
