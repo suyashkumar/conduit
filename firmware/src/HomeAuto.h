@@ -32,4 +32,5 @@ public:
   void reconnect();
   void msgCallback(char* topic, byte* payload, unsigned int length);
   void publishMessage(const char* message);
+  void publishData(const char* message, const char* dataStream);
 };

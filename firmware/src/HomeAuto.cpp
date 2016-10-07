@@ -111,6 +111,15 @@ void HomeAuto::publishMessage(const char* message){
   this->_client->publish(topicName, message);
 }
 
+void HomeAuto::publishData(const char* message, const char* dataStream) { 
+	char topicBuffer[20];
+	strcpy(topicBuffer, this->_name);
+	strcat(topicBuffer, "/stream/");
+	strcat(topicBuffer, dataStream);
+	const char* topicName = topicBuffer;
+	this->_client->publish(topicName, message);
+}
+
 void removeSpace(char* s) {
     for (char* s2 = s; *s2; ++s2) {
         if (*s2 != ' ')
