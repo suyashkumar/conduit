@@ -14,6 +14,7 @@ func main() {
 	router.POST("/api/auth", routes.Auth)
 	router.GET("/api/new", routes.New)
 	router.GET("/api/auth/test", routes.AuthMiddlewareGenerator(routes.Test))
+	router.GET("/", routes.Hello)
 	router.OPTIONS("/api/*sendPath", routes.Headers)
 
 	mqtt.RunServer()

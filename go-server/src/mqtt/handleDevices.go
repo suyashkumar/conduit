@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/surgemq/message"
 	"github.com/suyashkumar/surgemq/service"
+	"os"
 	"time"
 )
 
@@ -18,6 +19,9 @@ func onPublish(msg *message.PublishMessage) error {
 
 	if val, ok := handlerMap[string(msg.Topic())]; ok {
 		val(string(msg.Topic()), string(msg.Payload()))
+		if os.ExpandEnv("LOGGING") != "" {
+			fmt.Println("Topic:", string(msg.Topic()), "Payload:", string(msg.Payload()))
+		}
 	}
 	return nil
 }
