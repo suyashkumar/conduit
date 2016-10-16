@@ -3,7 +3,7 @@ package mqtt
 import (
 	"fmt"
 	"github.com/surgemq/message"
-	"github.com/surgemq/surgemq/service"
+	"github.com/suyashkumar/surgemq/service"
 	"time"
 )
 
@@ -15,11 +15,7 @@ func Register(name string, a func(string, string)) {
 }
 
 func onPublish(msg *message.PublishMessage) error {
-	/*
-		fmt.Println("message arrived")
-		fmt.Println(msg.String())
-		fmt.Println(string(msg.Payload()))
-	*/
+
 	if val, ok := handlerMap[string(msg.Topic())]; ok {
 		val(string(msg.Topic()), string(msg.Payload()))
 	}
@@ -29,20 +25,20 @@ func createServerClient() *service.Client {
 	client := &service.Client{}
 	msg := message.NewConnectMessage()
 	msg.SetClientId([]byte("surgemq"))
-	msg.SetKeepAlive(300)
+	KeepAlive := 40
+	msg.SetKeepAlive(uint16(KeepAlive))
 	msg.SetCleanSession(true)
-	msg.SetWillTopic([]byte("will"))
-	msg.SetWillMessage([]byte("send me home"))
 	msg.SetVersion(3)
 	if err := client.Connect("tcp://:1883", msg); err != nil {
 		fmt.Println("problem")
 		fmt.Println(err)
 	}
 
+	go stayAlive(client, KeepAlive)
+
 	submsg := message.NewSubscribeMessage()
 	submsg.AddTopic([]byte("#"), 0)
 	client.Subscribe(submsg, nil, onPublish)
-	//client.Subscribe(msg2, nil, nil)
 
 	pubMsg := message.NewPublishMessage()
 	pubMsg.SetTopic([]byte("suyash1"))
@@ -50,7 +46,13 @@ func createServerClient() *service.Client {
 	client.Publish(pubMsg, nil)
 	return client
 }
-
+func stayAlive(c *service.Client, KeepAlive int) {
+	for _ = range time.Tick(time.Duration(KeepAlive) * time.Second) {
+		c.Ping(func(msg, ack message.Message, err error) error {
+			return nil
+		})
+	}
+}
 func sendMessage(client *service.Client, device string, payload string) {
 	pubMsg := message.NewPublishMessage()
 	pubMsg.SetTopic([]byte(device))
@@ -62,18 +64,13 @@ func SendMessage(device string, payload string) {
 	sendMessage(mClient, device, payload)
 }
 
-func stayAlive() {
-	SendMessage("stayinAlive", "")
-	time.AfterFunc(50*time.Second, stayAlive)
-}
-
 func RunServer() {
 	fmt.Println("Starting up MQTT machinery...")
 	svr := &service.Server{
 		KeepAlive: 300,
 	}
 	go svr.ListenAndServe("tcp://:1883")
+	time.Sleep(200 * time.Millisecond)
 	mClient = createServerClient()
-	go stayAlive()
 	fmt.Println("Started and listening")
 }

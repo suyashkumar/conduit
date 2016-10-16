@@ -14,6 +14,9 @@ func main() {
 	router.POST("/api/auth", routes.Auth)
 	router.GET("/api/new", routes.New)
 	router.GET("/api/auth/test", routes.AuthMiddlewareGenerator(routes.Test))
+	router.OPTIONS("/api/*sendPath", routes.Headers)
+
 	mqtt.RunServer()
-	http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe(":80", router)
+	panic(err)
 }

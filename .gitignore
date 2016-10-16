@@ -3,3 +3,4 @@
 .gcc-flags.json
 server/secret.js
 *.swp
+go-server/src/routes/secret.go
