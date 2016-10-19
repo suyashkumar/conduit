@@ -28,7 +28,7 @@ func onPublish(msg *message.PublishMessage) error {
 	// If so, persist the contents to an appropiate db
 	var validDataStream = regexp.MustCompile(`^[^/]*/stream/.*`)
 	if validDataStream.MatchString(string(msg.Topic())) {
-		PersistMessage(string(msg.Payload()), string(msg.Topic()))
+		go PersistMessage(string(msg.Payload()), string(msg.Topic()))
 	}
 	return nil
 }
