@@ -57,6 +57,10 @@ int publishMessage(){
     homeAuto.publishMessage("hey there");
 }
 
+int publishSomeData(){
+	homeAuto.publishData("10", "testing");
+}
+
 void setup(void){
   Serial.begin(115200); // Start serial
   pinMode(LED, OUTPUT); // Set LED pin to output
@@ -66,6 +70,7 @@ void setup(void){
   // HomeAuto bindings
   homeAuto.addHandler("ledToggle", &ledToggle);
   homeAuto.addHandler("hello", &publishMessage);
+  homeAuto.addHandler("publishSomeData", &publishSomeData);
   homeAuto.setClient(pClient);
 
 }
