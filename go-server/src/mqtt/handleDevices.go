@@ -5,6 +5,7 @@ import (
 	"github.com/surgemq/message"
 	"github.com/suyashkumar/surgemq/service"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -22,6 +23,12 @@ func onPublish(msg *message.PublishMessage) error {
 		if os.ExpandEnv("LOGGING") != "" {
 			fmt.Println("Topic:", string(msg.Topic()), "Payload:", string(msg.Payload()))
 		}
+	}
+	// Look to see if the published message was a streaming data message
+	// If so, persist the contents to an appropiate db
+	var validDataStream = regexp.MustCompile(`^[^/]*/stream/.*`)
+	if validDataStream.MatchString(string(msg.Topic())) {
+		PersistMessage(string(msg.Payload()), string(msg.Topic()))
 	}
 	return nil
 }
