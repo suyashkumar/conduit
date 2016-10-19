@@ -20,7 +20,8 @@ func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	c := session.DB("homeauto").C("streammessages")
 
 	var results []models.StreamMessage
-	err = c.Find(bson.M{"Topic": ps.ByName("deviceName") + "/stream/" + ps.ByName("streamName")}).All(&results)
+	topicName := ps.ByName("deviceName") + "/stream/" + ps.ByName("streamName")
+	err = c.Find(bson.M{"topic": topicName}).All(&results)
 	if err != nil {
 		panic(err)
 	}
