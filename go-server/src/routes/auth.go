@@ -15,6 +15,8 @@ import (
 
 var SecretKey = []byte(SECRET)
 
+const JWT_TTL = 120 // In minutes
+
 type HomeAutoClaims struct {
 	Email string `json:"email"`
 	jwt.StandardClaims
@@ -141,7 +143,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		claims := HomeAutoClaims{
 			candidate.Email,
 			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(time.Minute * 60).Unix(),
+				ExpiresAt: time.Now().Add(time.Minute * JWT_TTL).Unix(),
 				Issuer:    "homeauto",
 			},
 		}
