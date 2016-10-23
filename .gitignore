@@ -4,3 +4,4 @@
 server/secret.js
 *.swp
 go-server/src/routes/secret.go
+go-server/src/mqtt/secret.go

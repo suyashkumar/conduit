@@ -33,9 +33,10 @@ func onPublish(msg *message.PublishMessage) error {
 	return nil
 }
 func createServerClient() *service.Client {
+	service.AllowedMap[SubSecret] = 1
 	client := &service.Client{}
 	msg := message.NewConnectMessage()
-	msg.SetClientId([]byte("surgemq"))
+	msg.SetClientId([]byte(SubSecret))
 	KeepAlive := 40
 	msg.SetKeepAlive(uint16(KeepAlive))
 	msg.SetCleanSession(true)
