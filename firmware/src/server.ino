@@ -60,6 +60,7 @@ int publishMessage(){
 
 int publishSomeData(){
 	homeAuto.publishData("10", "testing");
+	homeAuto.publishMessage("Done");
 }
 
 void setup(void){

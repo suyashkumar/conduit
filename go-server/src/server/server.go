@@ -4,6 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"mqtt"
 	"net/http"
+	"os"
 	"routes"
 )
 
@@ -19,6 +20,6 @@ func main() {
 	router.OPTIONS("/api/*sendPath", routes.Headers)
 
 	mqtt.RunServer()
-	err := http.ListenAndServe(":80", router)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	panic(err)
 }
