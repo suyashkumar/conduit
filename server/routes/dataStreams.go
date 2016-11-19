@@ -6,7 +6,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"models"
+	"home-automation/server/models"
 	"net/http"
 )
 

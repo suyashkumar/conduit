@@ -2,7 +2,7 @@ package mqtt
 
 import (
 	"gopkg.in/mgo.v2"
-	"models"
+	"home-automation/server/models"
 	"time"
 )
 
