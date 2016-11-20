@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"mqtt"
+	"home-automation/server/mqtt"
+	"home-automation/server/routes"
 	"net/http"
 	"os"
-	"routes"
 )
 
 func main() {
