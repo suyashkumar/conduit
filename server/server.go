@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"home-automation/server/mqtt"
-	"home-automation/server/routes"
+	"github.com/suyashkumar/home-automation/server/mqtt"
+	"github.com/suyashkumar/home-automation/server/routes"
 	"net/http"
 	"os"
 )

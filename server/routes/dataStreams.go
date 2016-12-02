@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"github.com/suyashkumar/home-automation/server/models"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"home-automation/server/models"
 	"net/http"
 )
 
