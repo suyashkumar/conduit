@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/home-automation/server/mqtt"
 	"github.com/suyashkumar/home-automation/server/routes"
@@ -20,6 +21,7 @@ func main() {
 	router.OPTIONS("/api/*sendPath", routes.Headers)
 
 	mqtt.RunServer()
+	fmt.Printf("Web server to listen on port :%s", os.Getenv("PORT"))
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	panic(err)
 }
