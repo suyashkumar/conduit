@@ -1,5 +1,5 @@
 /*
-HomeAuto.cpp
+Conduit.cpp
 A library that handles ESP8266 communication with a server (even on private
 networks). Consumers of this library can simply write functions and have them
 be fired whenver the server fires a given event directed at this device. There is
@@ -10,7 +10,7 @@ device and decide what funciton to all is abstracted away entirely by this libra
 @author: Suyash Kumar <suyashkumar2003@gmail.com>
 */
 
-#include "HomeAuto.h"
+#include "Conduit.h"
 
 typedef struct node {
   handler f;
@@ -21,7 +21,7 @@ typedef struct node {
 node_t* root;
 node_t* current;
 
-HomeAuto::HomeAuto(const char* name, const char* server){
+Conduit::Conduit(const char* name, const char* server){
   // Set name and server
   this->_name = name;
   this->_mqtt_server = server;
@@ -33,7 +33,7 @@ HomeAuto::HomeAuto(const char* name, const char* server){
   current = root;
 }
 
-void HomeAuto::addHandler(const char* name, handler f){
+void Conduit::addHandler(const char* name, handler f){
   node *newNode = (node_t*) malloc(sizeof(node_t));
   newNode->f = f;
   newNode->next=0;
@@ -42,7 +42,7 @@ void HomeAuto::addHandler(const char* name, handler f){
   current=newNode;
 }
 
-void HomeAuto::callHandler(const char* name){
+void Conduit::callHandler(const char* name){
   node_t* currentInSearch = root;
   while(true){
     if (strcmp(name, currentInSearch->name)==0){
@@ -56,7 +56,7 @@ void HomeAuto::callHandler(const char* name){
   }
 }
 
-HomeAuto& HomeAuto::setClient(PubSubClient& client){
+Conduit& Conduit::setClient(PubSubClient& client){
   this->_client = &client;
   client.setServer(this->_mqtt_server, 1883);
   client.setCallback([&](char* topic, byte* payload, unsigned int length){
@@ -75,14 +75,14 @@ HomeAuto& HomeAuto::setClient(PubSubClient& client){
   return *this;
 }
 
-void HomeAuto::handle(){
+void Conduit::handle(){
   if (!this->_client->connected()){
     this->reconnect();
   }
   this->_client->loop();
 }
 
-void HomeAuto::reconnect() {
+void Conduit::reconnect() {
   // Loop until we're reconnected
   while (!this->_client->connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -103,7 +103,7 @@ void HomeAuto::reconnect() {
   }
 }
 
-void HomeAuto::publishMessage(const char* message){
+void Conduit::publishMessage(const char* message){
   char str[20];
   strcpy(str, this->_name);
   strcat(str, "/device");
@@ -111,7 +111,7 @@ void HomeAuto::publishMessage(const char* message){
   this->_client->publish(topicName, message);
 }
 
-void HomeAuto::publishData(const char* message, const char* dataStream) { 
+void Conduit::publishData(const char* message, const char* dataStream) { 
 	char topicBuffer[20];
 	strcpy(topicBuffer, this->_name);
 	strcat(topicBuffer, "/stream/");

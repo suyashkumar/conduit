@@ -14,7 +14,7 @@ device and decide what funciton to all is abstracted away entirely by this libra
 #include <WiFiClient.h>
 #include <wifi_info.h> // comment this out and fill in the below two lines
 #include <PubSubClient.h>
-#include <HomeAuto.h>
+#include <Conduit.h>
 
 #define LED 4
 
@@ -24,9 +24,9 @@ device and decide what funciton to all is abstracted away entirely by this libra
 
 WiFiClient client;
 PubSubClient pClient(client);
-//HomeAuto homeAuto("suyash1", "home.suyash.io"); // or "suyash", "home.suyash.io"
-HomeAuto homeAuto("suyash1", "10.0.0.225"); // or "suyash", "home.suyash.io"
-//HomeAuto homeAuto("suyash", "home.suyash.io"); // or "suyash", "home.suyash.io"
+//HomeAuto conduit("suyash1", "home.suyash.io"); // or "suyash", "home.suyash.io"
+Conduit conduit("suyash1", "10.0.0.225"); // or "suyash", "home.suyash.io"
+//HomeAuto conduit("suyash", "home.suyash.io"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
 
 void startWIFI(){
@@ -51,16 +51,16 @@ int ledToggle(){
   digitalWrite(LED, (ledStatus) ? LOW : HIGH);
   ledStatus = (ledStatus) ? 0 : 1;
   Serial.println("Toggled");
-  homeAuto.publishMessage((ledStatus) ? "LED ON" : "LED OFF");
+  conduit.publishMessage((ledStatus) ? "LED ON" : "LED OFF");
 }
 
 int publishMessage(){
-    homeAuto.publishMessage("hey there");
+    conduit.publishMessage("hey there");
 }
 
 int publishSomeData(){
-	homeAuto.publishData("10", "testing");
-	homeAuto.publishMessage("Done");
+	conduit.publishData("10", "testing");
+	conduit.publishMessage("Done");
 }
 
 void setup(void){
@@ -70,13 +70,13 @@ void setup(void){
   startWIFI(); // Config/start wifi
 
   // HomeAuto bindings
-  homeAuto.addHandler("ledToggle", &ledToggle);
-  homeAuto.addHandler("hello", &publishMessage);
-  homeAuto.addHandler("publishSomeData", &publishSomeData);
-  homeAuto.setClient(pClient);
+  conduit.addHandler("ledToggle", &ledToggle);
+  conduit.addHandler("hello", &publishMessage);
+  conduit.addHandler("publishSomeData", &publishSomeData);
+  conduit.setClient(pClient);
 
 }
 
 void loop(void){
-  homeAuto.handle();
+  conduit.handle();
 }
