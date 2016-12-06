@@ -1,8 +1,10 @@
 # conduit
 
-Conduit allows you to quickly build cloud connected hardware that you can control using a secure RESTful API. The current firmware library runs on WIFI-enabled ESP8266 and Arduino compatible microcontrollers. The firmware library allows you to directly call arbitrary C functions on your firmware from anywhere in the world via a RESTful API. 
+Conduit allows you to quickly build cloud connected hardware that you can control using a secure RESTful API. The current firmware library runs on WIFI-enabled ESP8266 and Arduino compatible microcontrollers. 
 
-A sample project that uses this library to switch lights from the cloud: [smart-lights](https://github.com/suyashkumar/smart-lights)
+In a nutshell, conduit allows you to directly call arbitrary C functions on your firmware from anywhere in the world via a RESTful API. 
+
+[smart-lights](https://github.com/suyashkumar/smart-lights) is a sample project that uses this library to switch lights from the cloud. 
 
 Currently all firmware<-->server communication has been validated (see project above), but you currently must install an instance of the server yourself (I'll have an instance that takes new accounts up shortly :)). Contact me directly if you're interested or need help!
 
