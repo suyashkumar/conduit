@@ -1,8 +1,12 @@
-# home-automation
+# conduit
 
-This is a server and ESP8266/Arduino firmware library that allows for __dead simple__ web-to-device communications. It completley abstracts away network logic needed to remotely call functions on devices and publish data to a server.
+Conduit allows you to quickly build cloud connected hardware that you can control using a secure RESTful API. The current firmware library runs on WIFI-enabled ESP8266 and Arduino compatible microcontrollers. The firmware library allows you to directly call arbitrary C functions on your firmware from anywhere in the world via a RESTful API. 
 
-The basic functionality of this library is straightforward. Start with the provided platformio template and just do the following: 
+A sample project that uses this library to switch lights from the cloud: [smart-lights](https://github.com/suyashkumar/smart-lights)
+
+Currently all firmware<-->server communication has been validated (see project above), but you currently must install an instance of the server yourself (I'll have an instance that takes new accounts up shortly :)). Contact me directly if you're interested or need help!
+
+The basic functionality of this library is straightforward. Start with the provided platformio firmware template and just do the following: 
   
   1. Write a C function that returns an integer in your Arduino Code:
   
