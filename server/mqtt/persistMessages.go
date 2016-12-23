@@ -1,7 +1,7 @@
 package mqtt
 
 import (
-	"github.com/suyashkumar/home-automation/server/models"
+	"github.com/suyashkumar/conduit/server/models"
 	"gopkg.in/mgo.v2"
 	"time"
 )

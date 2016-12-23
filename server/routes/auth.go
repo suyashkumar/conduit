@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
-	"github.com/suyashkumar/home-automation/server/models"
+	"github.com/suyashkumar/conduit/server/models"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
-	"github.com/suyashkumar/home-automation/server/mqtt"
-	"github.com/suyashkumar/home-automation/server/routes"
+	"github.com/suyashkumar/conduit/server/mqtt"
+	"github.com/suyashkumar/conduit/server/routes"
 	"net/http"
 	"os"
 )

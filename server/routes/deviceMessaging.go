@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
-	"github.com/suyashkumar/home-automation/server/mqtt"
+	"github.com/suyashkumar/conduit/server/mqtt"
 	"net/http"
 	"time"
 )
