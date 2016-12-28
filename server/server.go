@@ -13,7 +13,6 @@ func main() {
 	router := httprouter.New()
 	router.GET("/api/send/:deviceName/:funcName", routes.AuthMiddlewareGenerator(routes.Send))
 	router.GET("/api/streams/:deviceName/:streamName", routes.AuthMiddlewareGenerator(routes.GetStreamedMessages))
-	router.GET("/api/users", routes.ListUsers)
 	router.POST("/api/auth", routes.Auth)
 	router.POST("/api/register", routes.New)
 	router.GET("/api/me", routes.AuthMiddlewareGenerator(routes.GetUser))
