@@ -121,7 +121,7 @@ void Conduit::publishMessage(const char* message){
 }
 
 void Conduit::publishData(const char* message, const char* dataStream) { 
-	char topicBuffer[20];
+	char topicBuffer[40];
 	strcpy(topicBuffer, this->_prefixed_name);
 	strcat(topicBuffer, "/stream/");
 	strcat(topicBuffer, dataStream);

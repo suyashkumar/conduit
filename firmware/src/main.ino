@@ -26,8 +26,8 @@ WiFiClient client;
 PubSubClient pClient(client);
 //HomeAuto conduit("suyash1", "home.suyash.io"); // or "suyash", "home.suyash.io"
 //Conduit conduit("suyash1", "10.0.0.225"); // or "suyash", "home.suyash.io"
-Conduit conduit("suyash", "192.168.1.144", "zHqHR0nSBTrIzaAY3JCY510Z"); // or "suyash", "home.suyash.io"
-//Conduit conduit("suyash", "conduit.suyash.io", "a"); // or "suyash", "home.suyash.io"
+//Conduit conduit("suyash", "192.168.1.144", "zHqHR0nSBTrIzaAY3JCY510Z"); // or "suyash", "home.suyash.io"
+Conduit conduit("suyash", "conduit.suyash.io", "a"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
 
 void startWIFI(){
