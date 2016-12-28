@@ -35,6 +35,13 @@ type TokenResponse struct {
 	Token   string `json:"token"`
 }
 
+type UserResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+	Email   string `json:"email"`
+	Key     string `json:"key"`
+}
+
 type AuthHandler func(
 	http.ResponseWriter,
 	*http.Request,
@@ -141,10 +148,20 @@ func sendErrorResponse(w http.ResponseWriter, errorString string, errorCode int)
 	return nil
 }
 
-func Test(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
-	fmt.Fprintf(w, "You're authenticated\n")
-	fmt.Fprintf(w, hc.Email)
-	fmt.Fprintf(w, hc.Prefix)
+func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
+	u := UserResponse{
+		Success: true,
+		Message: "You're authenticated",
+		Email:   hc.Email,
+		Key:     hc.Prefix,
+	}
+	jsonBytes, err := json.Marshal(u)
+	if err != nil {
+		sendErrorResponse(w, "Problem parsing user info json", 500)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, string(jsonBytes))
+
 }
 
 func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

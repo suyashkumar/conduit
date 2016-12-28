@@ -16,7 +16,7 @@ func main() {
 	router.GET("/api/users", routes.ListUsers)
 	router.POST("/api/auth", routes.Auth)
 	router.POST("/api/register", routes.New)
-	router.GET("/api/auth/test", routes.AuthMiddlewareGenerator(routes.Test))
+	router.GET("/api/me", routes.AuthMiddlewareGenerator(routes.GetUser))
 	router.GET("/", routes.Hello)
 	router.OPTIONS("/api/*sendPath", routes.Headers)
 
