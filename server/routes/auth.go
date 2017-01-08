@@ -6,6 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
+	"github.com/suyashkumar/conduit/server/secrets"
 	"github.com/suyashkumar/conduit/server/util"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
@@ -14,7 +15,7 @@ import (
 	"time"
 )
 
-var SecretKey = []byte(SECRET)
+var SecretKey = []byte(secrets.SECRET)
 
 const JWT_TTL = 120      // In minutes
 const PREFIX_LENGTH = 24 // Characters or bytes
@@ -88,7 +89,7 @@ func returnHash(password string) string {
 }
 
 func ListUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +115,7 @@ func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 	u.Prefix = util.GetRandString(PREFIX_LENGTH)
 	u.Password = returnHash(u.Password)
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
 	}
@@ -171,7 +172,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		sendErrorResponse(w, "Error: could not decode user. Did you POST with the proper user format? Full Error:"+err.Error(), 400)
 		return
 	}
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
 	}

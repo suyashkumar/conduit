@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
+	"github.com/suyashkumar/conduit/server/secrets"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
 
 func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
 	}

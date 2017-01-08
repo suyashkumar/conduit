@@ -2,12 +2,13 @@ package mqtt
 
 import (
 	"github.com/suyashkumar/conduit/server/models"
+	"github.com/suyashkumar/conduit/server/secrets"
 	"gopkg.in/mgo.v2"
 	"time"
 )
 
 func PersistMessage(message string, topic string) {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
 	}

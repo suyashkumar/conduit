@@ -3,6 +3,7 @@ package mqtt
 import (
 	"fmt"
 	"github.com/surgemq/message"
+	"github.com/suyashkumar/conduit/server/secrets"
 	"github.com/suyashkumar/surgemq/service"
 	"os"
 	"regexp"
@@ -33,10 +34,10 @@ func onPublish(msg *message.PublishMessage) error {
 	return nil
 }
 func createServerClient() *service.Client {
-	service.AllowedMap[SubSecret] = 1
+	service.AllowedMap[secrets.SubSecret] = 1
 	client := &service.Client{}
 	msg := message.NewConnectMessage()
-	msg.SetClientId([]byte(SubSecret))
+	msg.SetClientId([]byte(secrets.SubSecret))
 	KeepAlive := 40
 	msg.SetKeepAlive(uint16(KeepAlive))
 	msg.SetCleanSession(true)
