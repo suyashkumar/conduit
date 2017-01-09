@@ -9,11 +9,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 
 @author: Suyash Kumar <suyashkumar2003@gmail.com>
 */
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <wifi_info.h> // comment this out and fill in the below two lines
-#include <PubSubClient.h>
+#include <Arduino.h> 
+#include <wifi_info.h> // comment this out and fill in the below two lines 
 #include <Conduit.h>
 
 #define LED 4
@@ -22,31 +19,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 //const char* ssid = "mywifi";
 //const char* password = "";
 
-WiFiClient client;
-PubSubClient pClient(client);
-//HomeAuto conduit("suyash1", "home.suyash.io"); // or "suyash", "home.suyash.io"
-//Conduit conduit("suyash1", "10.0.0.225"); // or "suyash", "home.suyash.io"
-//Conduit conduit("suyash", "192.168.1.144", "zHqHR0nSBTrIzaAY3JCY510Z"); // or "suyash", "home.suyash.io"
 Conduit conduit("suyash", "conduit.suyash.io", "a"); // or "suyash", "home.suyash.io"
 int ledStatus = 0;
-
-void startWIFI(){
-  WiFi.begin(ssid, password);
-  Serial.println("");
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
-}
 
 int ledToggle(){
   digitalWrite(LED, (ledStatus) ? LOW : HIGH);
@@ -68,13 +42,12 @@ void setup(void){
   Serial.begin(115200); // Start serial
   pinMode(LED, OUTPUT); // Set LED pin to output
 
-  startWIFI(); // Config/start wifi
+  conduit.startWIFI(ssid, password); // Config/start wifi
 
   // HomeAuto bindings
   conduit.addHandler("ledToggle", &ledToggle);
   conduit.addHandler("hello", &publishMessage);
-  conduit.addHandler("publishSomeData", &publishSomeData);
-  conduit.setClient(pClient);
+  conduit.addHandler("publishSomeData", &publishSomeData); 
 
 }
 

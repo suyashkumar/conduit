@@ -21,6 +21,8 @@ typedef struct node {
 node_t* root;
 node_t* current;
 char prefixed_name[35];
+WiFiClient client;
+PubSubClient pClient(client);
 
 Conduit::Conduit(const char* name, const char* server, const char* prefix){
   // Set name and server
@@ -39,6 +41,8 @@ Conduit::Conduit(const char* name, const char* server, const char* prefix){
   root->next=0;
   root->name="ROOT"; // reserved name for root node (for now)
   current = root;
+
+  this->setClient(pClient);
 }
 
 void Conduit::addHandler(const char* name, handler f){
@@ -129,6 +133,25 @@ void Conduit::publishData(const char* message, const char* dataStream) {
 	this->_client->publish(topicName, message);
 }
 
+void Conduit::startWIFI(const char* ssid, const char* password){
+  WiFi.begin(ssid, password);
+  Serial.println("");
+
+  // Wait for connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+}
+
+
 void removeSpace(char* s) {
     for (char* s2 = s; *s2; ++s2) {
         if (*s2 != ' ')
@@ -136,3 +159,4 @@ void removeSpace(char* s) {
     }
     *s = 0;
 }
+

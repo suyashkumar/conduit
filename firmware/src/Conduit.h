@@ -12,7 +12,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 
 #include <Arduino.h>
 #include <PubSubClient.h>
-#include <map>
+#include <WiFiClient.h>
+#include <ESP8266WiFi.h> 
 
 typedef int (*handler)();
 void removeSpace(char* s);
@@ -35,4 +36,5 @@ public:
   void msgCallback(char* topic, byte* payload, unsigned int length);
   void publishMessage(const char* message);
   void publishData(const char* message, const char* dataStream);
+  void startWIFI(const char* ssid, const char* password); 
 };
