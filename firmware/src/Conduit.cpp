@@ -40,9 +40,7 @@ Conduit::Conduit(const char* name, const char* server, const char* prefix){
   root = (node_t *)malloc(sizeof(node_t));
   root->next=0;
   root->name="ROOT"; // reserved name for root node (for now)
-  current = root;
-
-  this->setClient(pClient);
+  current = root; 
 }
 
 void Conduit::addHandler(const char* name, handler f){
@@ -68,10 +66,11 @@ void Conduit::callHandler(const char* name){
   }
 }
 
-Conduit& Conduit::setClient(PubSubClient& client){
-  this->_client = &client;
-  client.setServer(this->_mqtt_server, 1883);
-  client.setCallback([&](char* topic, byte* payload, unsigned int length){
+Conduit& Conduit::init(){
+  this->_client = &pClient;
+  pClient.setServer(this->_mqtt_server, 1883);
+  Serial.println("Happened");
+  pClient.setCallback([&](char* topic, byte* payload, unsigned int length){
     Serial.print("Message arrived [");
     Serial.print(topic);
     Serial.print("] ");
@@ -117,7 +116,7 @@ void Conduit::reconnect() {
 }
 
 void Conduit::publishMessage(const char* message){
-  char str[20];
+  char str[40];
   strcpy(str, this->_prefixed_name);
   strcat(str, "/device");
   const char* topicName = str;

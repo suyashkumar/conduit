@@ -28,7 +28,7 @@ private:
   const char* _prefix;
 public:
   Conduit(const char* name, const char* server, const char* prefix);
-  Conduit& setClient(PubSubClient& client);
+  Conduit& init();
   void addHandler(const char* name, handler f);
   void callHandler(const char* name);
   void handle();
