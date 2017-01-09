@@ -1,6 +1,6 @@
 # conduit
 
-[Still under development -- early alpha/mvp]
+[Still under development]
 
 Conduit allows you to quickly build cloud connected hardware that you can control using a secure RESTful API. The current firmware library runs on WIFI-enabled ESP8266 and Arduino compatible microcontrollers. 
 
