@@ -40,16 +40,20 @@ func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *Home
 		c <- "done"
 
 	})
-	time.AfterFunc(2*time.Second, func() {
+	timer := time.AfterFunc(2*time.Second, func() {
 		sendErrorResponse(w, "ERROR, no response from device", 504)
 		fmt.Fprintf(w, "ERROR")
 		end <- "done"
-
 	})
 	select {
 	case <-c:
+		timer.Stop()
+		close(c)
+		close(end)
 		return
 	case <-end:
+		close(c)
+		close(end)
 		return
 	}
 	close(c)
