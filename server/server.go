@@ -9,6 +9,11 @@ import (
 	"os"
 )
 
+// Redirect to https:// 
+func redirectToHttps(w http.ResponseWriter, r *http.Request) { 
+    http.Redirect(w, r, "https://conduit.suyash.io"+r.RequestURI, http.StatusMovedPermanently)
+}
+
 func main() {
 	router := httprouter.New()
 	router.GET("/api/send/:deviceName/:funcName", routes.AuthMiddlewareGenerator(routes.Send))
@@ -22,6 +27,7 @@ func main() {
 
 	mqtt.RunServer()
 	fmt.Printf("Web server to listen on port :%s", os.Getenv("PORT"))
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
+	go http.ListenAndServeTLS(":443", os.Getenv("CERT"), os.Getenv("PRIV_KEY"), router)
+	err := http.ListenAndServe(":80", http.HandlerFunc(redirectToHttps))
 	panic(err)
 }
