@@ -1,5 +1,5 @@
 const constants = {
-	serverUrl: 'http://conduit.suyash.io' 
+	serverUrl: 'https://conduit.suyash.io' 
 }
 
 export default constants; 
