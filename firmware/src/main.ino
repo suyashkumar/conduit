@@ -10,7 +10,7 @@ device and decide what funciton to all is abstracted away entirely by this libra
 @author: Suyash Kumar <suyashkumar2003@gmail.com>
 */
 #include <Arduino.h> 
-#include <wifi_info.h> // You can include secret wifi info in a seperate file 
+// #include <wifi_info.h> // You can include secret wifi info in a seperate file 
 #include <Conduit.h>
 
 #define LED D0
