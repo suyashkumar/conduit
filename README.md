@@ -11,7 +11,7 @@ With Conduit you can:
 all with minimal boilerplate and minimal setup :).
 
 ### Getting Started
-Controlling an LED from the Cloud takes less than 5 minutes with Conduit. 
+Controlling an LED from the Cloud takes less than 5 minutes with Conduit. Please make sure you've installed the relevant drivers ([here](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx) if you're using the nodemcu ESP8266 chip linked above) and installed the platformio build system.
 
 1. Create a conduit account at https://conduit.suyash.io/#/login
 2. Retreive your API key from the Account view at https://conduit.suyash.io/#/account
@@ -46,3 +46,8 @@ Controlling an LED from the Cloud takes less than 5 minutes with Conduit.
 ### Sample Project
 [smart-lights](https://github.com/suyashkumar/smart-lights) is a sample project that uses this library to switch lights from the cloud. 
 ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif)
+
+### License 
+Copyright (c) 2017 Suyash Kumar
+
+See [conduit/LICENSE.txt](https://github.com/suyashkumar/conduit/blob/master/LICENSE.txt) for license text (CC Attribution-NonCommercial 3.0)
