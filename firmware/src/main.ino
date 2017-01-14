@@ -14,6 +14,8 @@ device and decide what funciton to all is abstracted away entirely by this libra
 #include <Conduit.h>
 
 #define LED D0
+#define LED_ON 1
+#define LED_OFF 0
 
 // Fill out the below Github folks:
 //const char* ssid = "mywifi";
@@ -23,14 +25,14 @@ const char* apiKey = "nTyiMTdyjS8UD1qA5hw4hSP1";
 const char* serverUrl = "conduit.suyash.io";
 
 Conduit conduit(deviceName, serverUrl, apiKey); // init Conduit 
-int ledStatus = 0;
+int ledStatus = LED_OFF;
 
 // Toggles an LED attached on the LED pin!
 int ledToggle(){
   digitalWrite(LED, (ledStatus) ? LOW : HIGH);
-  ledStatus = (ledStatus) ? 0 : 1;
+  ledStatus = (ledStatus) ? LED_OFF : LED_ON;
   Serial.println("Toggled");
-  conduit.publishMessage((ledStatus) ? "LED ON" : "LED OFF");
+  conduit.publishMessage((ledStatus) ? "LED ON" : "LED OFF"); // if using built-in LED on D0, will be the REVERSE
 }
 
 // Publishes a message response to the server 
