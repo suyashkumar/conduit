@@ -18,10 +18,10 @@ device and decide what funciton to all is abstracted away entirely by this libra
 #define LED_OFF 0
 
 // Fill out the below Github folks:
-//const char* ssid = "mywifi";
-//const char* password = "";
-const char* deviceName = "suyasha";
-const char* apiKey = "nTyiMTdyjS8UD1qA5hw4hSP1";
+const char* ssid = "mywifi";
+const char* password = "";
+const char* deviceName = "suyash_1";
+const char* apiKey = "your-api-key-here";
 const char* serverUrl = "conduit.suyash.io";
 
 Conduit conduit(deviceName, serverUrl, apiKey); // init Conduit 
