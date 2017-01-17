@@ -6,5 +6,6 @@ go:
 before_install:
     - mkdir ./server/secrets
     - echo "package secrets\n\nconst SubSecret=\"aaa\"\nconst SECRET=\"aaaa\"\nconst DB_DIAL_URL=\"mongodb://localhost\"" > ./server/secrets/secret.go
+    - cat ./server/secrets/secret.go
 install: go get ./server
 script: go test -v ./server/tests
