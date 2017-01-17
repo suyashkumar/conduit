@@ -1,4 +1,5 @@
 # conduit
+<img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" />
 
 Conduit allows you to quickly build cloud-connected hardware that you can control and communicate with from anywhere in the world. Conduit provides a RESTful API that allows you to easily call arbitrary functions (e.g. `int lightsOn()`) or to recieve/store data from the [low-cost ESP8266 WiFi microcontroller](https://www.amazon.com/HiLetgo-Version-NodeMCU-Internet-Development/dp/B010O1G1ES/ref=sr_1_3?ie=UTF8&qid=1483953570&sr=8-3&keywords=nodemcu+esp8266). 
 
