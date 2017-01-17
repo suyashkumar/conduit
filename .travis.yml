@@ -1,0 +1,7 @@
+language: go
+
+go:
+    - 1.7.x
+    - master
+install: go get ./server
+script: go test -v ./server/tests
