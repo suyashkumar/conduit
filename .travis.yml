@@ -1,13 +1,27 @@
-language: go
-
+language: go 
 go:
     - 1.7.x
     - master
+addons:
+    apt:
+        packages:
+            - nodejs
+            - cmake
 before_install:
     - mkdir ./server/secrets
-    - echo -e "package secrets\n\nconst SubSecret=\"aaa\"\nconst SECRET=\"aaaa\"\nconst DB_DIAL_URL=\"mongodb://localhost\"" > ./server/secrets/secret.go
-    - cat ./server/secrets/secret.go
+    - echo -e "package secrets\n\nconst SubSecret=\"aaa\"\nconst SECRET=\"aaaa\"\nconst DB_DIAL_URL=\"mongodb://localhost\"" > ./server/secrets/secret.go 
+    - nvm install node 
+    - nvm use node 
+    - npm cache clean -f 
 install: 
     - go get ./server
     - go get "github.com/stretchr/testify/assert"
-script: go test -v ./server/tests
+    - cd ./web-client 
+    - npm -v 
+    - npm install
+    - cd ..
+script: 
+    - go test -v ./server/tests
+    - cd ./web-client
+    - npm run test 
+    - cd ..
