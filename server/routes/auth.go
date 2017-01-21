@@ -17,7 +17,7 @@ import (
 
 var SecretKey = []byte(secrets.SECRET)
 
-const JWT_TTL = 120      // In minutes
+const JWT_TTL = 720 // In minutes
 const PREFIX_LENGTH = 24 // Characters or bytes
 
 type HomeAutoClaims struct {
