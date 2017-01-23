@@ -1,3 +1,3 @@
 web-client/scripts/* linguist-vendored
 web-client/config/* linguist-vendored
-server/public/* linguist-vendored
+server/public/static/js/* linguist-vendored
