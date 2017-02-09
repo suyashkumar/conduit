@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/suyashkumar/conduit/server/service"
+	"github.com/suyashkumar/conduit/server/app"
 )
 
 func main() {
-	conduitService := service.NewConduitService() // Init a new conduit web service
-	conduitService.Run()                          // Run the conduit web service server
+	conduitApp := app.NewConduitApp() // Init a new conduit web service
+	conduitApp.Run()                  // Run the conduit web service server
 }

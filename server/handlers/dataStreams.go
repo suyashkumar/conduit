@@ -1,4 +1,4 @@
-package routes
+package handlers
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
+func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
 	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)
