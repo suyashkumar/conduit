@@ -19,7 +19,7 @@ func PrefixedName(deviceName string, prefix string) string {
 	return prefix + deviceName
 }
 
-func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
+func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
 	if r.Method == "OPTIONS" {
 		fmt.Println("OPT")
 		return

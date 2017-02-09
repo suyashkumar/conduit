@@ -17,7 +17,7 @@ import (
 
 var SecretKey = []byte(secrets.SECRET)
 
-const JWT_TTL = 720 // In minutes
+const JWT_TTL = 720      // In minutes
 const PREFIX_LENGTH = 24 // Characters or bytes
 
 type HomeAutoClaims struct {
@@ -43,14 +43,34 @@ type UserResponse struct {
 	Key     string `json:"key"`
 }
 
+type HandlerContext struct {
+	DbSession *mgo.Session
+}
+
 type AuthHandler func(
 	http.ResponseWriter,
 	*http.Request,
 	httprouter.Params,
+	*HandlerContext,
 	*HomeAutoClaims,
 )
 
-func AuthMiddlewareGenerator(next AuthHandler) httprouter.Handle {
+type ConduitHandler func(
+	http.ResponseWriter,
+	*http.Request,
+	httprouter.Params,
+	*HandlerContext,
+)
+
+func ConduitMiddleware(next ConduitHandler, c *HandlerContext) httprouter.Handle {
+	middleware := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		next(w, r, ps, c)
+	}
+
+	return middleware
+}
+
+func ConduitAuthMiddleware(next AuthHandler, c *HandlerContext) httprouter.Handle {
 
 	middleware := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		SetCorsHeaders(w)
@@ -61,7 +81,7 @@ func AuthMiddlewareGenerator(next AuthHandler) httprouter.Handle {
 			})
 
 			if claims, ok := token.Claims.(*HomeAutoClaims); ok && token.Valid {
-				next(w, r, ps, claims)
+				next(w, r, ps, c, claims)
 				return
 			} else {
 				returnError := ErrorResponse{Success: false, Error: err.Error()}
@@ -106,7 +126,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, string(resBytes))
 }
 
-func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext) {
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
 	if err != nil {
@@ -149,7 +169,7 @@ func sendErrorResponse(w http.ResponseWriter, errorString string, errorCode int)
 	return nil
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *HomeAutoClaims) {
+func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
 	u := UserResponse{
 		Success: true,
 		Message: "You're authenticated",
@@ -165,7 +185,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, hc *H
 
 }
 
-func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext) {
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
 	if err != nil {

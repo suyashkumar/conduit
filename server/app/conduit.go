@@ -5,17 +5,24 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/mqtt"
 	"github.com/suyashkumar/conduit/server/routes"
+	"github.com/suyashkumar/conduit/server/secrets"
+	"gopkg.in/mgo.v2"
 	"net/http"
 	"os"
 )
+
+type AppConfig struct {
+	IsDev bool
+}
 
 type ConduitApp interface {
 	Run()
 }
 
 type ConduitAppImpl struct {
-	Router *httprouter.Router
-	IsDev  bool
+	AppConfig
+	Router  *httprouter.Router
+	context *routes.HandlerContext
 }
 
 func (c *ConduitAppImpl) Run() {
@@ -25,19 +32,27 @@ func (c *ConduitAppImpl) Run() {
 }
 
 func (c *ConduitAppImpl) attachRoutes() {
-	c.Router.GET("/api/send/:deviceName/:funcName", routes.AuthMiddlewareGenerator(routes.Send))
-	c.Router.GET("/api/streams/:deviceName/:streamName", routes.AuthMiddlewareGenerator(routes.GetStreamedMessages))
-	c.Router.POST("/api/auth", routes.Auth)
-	c.Router.POST("/api/register", routes.New)
-	c.Router.GET("/api/me", routes.AuthMiddlewareGenerator(routes.GetUser))
+	c.Router.GET("/api/send/:deviceName/:funcName", c.WrapAuthHandler(routes.Send))
+	c.Router.GET("/api/streams/:deviceName/:streamName", c.WrapAuthHandler(routes.GetStreamedMessages))
+	c.Router.POST("/api/auth", c.WrapHandler(routes.Auth))
+	c.Router.POST("/api/register", c.WrapHandler(routes.New))
+	c.Router.GET("/api/me", c.WrapAuthHandler(routes.GetUser))
 	c.Router.GET("/", routes.Hello)
 	c.Router.OPTIONS("/api/*sendPath", routes.Headers)
 	c.Router.ServeFiles("/static/*filepath", http.Dir("public/static"))
 }
 
+func (c *ConduitAppImpl) WrapAuthHandler(next routes.AuthHandler) httprouter.Handle {
+	return routes.ConduitAuthMiddleware(next, c.context)
+}
+
+func (c *ConduitAppImpl) WrapHandler(next routes.ConduitHandler) httprouter.Handle {
+	return routes.ConduitMiddleware(next, c.context)
+}
+
 func (c *ConduitAppImpl) startWebServer() {
 	fmt.Printf("Web server to listen on port :%s", os.Getenv("PORT"))
-	if c.IsDev {
+	if c.AppConfig.IsDev {
 		err := http.ListenAndServe(":"+os.Getenv("PORT"), c.Router)
 		panic(err)
 	} else {
@@ -49,8 +64,17 @@ func (c *ConduitAppImpl) startWebServer() {
 }
 
 func NewConduitApp() *ConduitAppImpl {
+	session, err := mgo.Dial(secrets.DB_DIAL_URL)
+	if err != nil {
+		panic(err)
+	}
 	return &ConduitAppImpl{
 		Router: httprouter.New(),
-		IsDev:  os.Getenv("DEV") == "TRUE",
+		AppConfig: AppConfig{
+			IsDev: os.Getenv("DEV") == "TRUE",
+		},
+		context: &routes.HandlerContext{
+			DbSession: session,
+		},
 	}
 }
