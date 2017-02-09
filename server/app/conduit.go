@@ -1,4 +1,4 @@
-package service
+package app
 
 import (
 	"fmt"
@@ -9,22 +9,22 @@ import (
 	"os"
 )
 
-type ConduitService interface {
+type ConduitApp interface {
 	Run()
 }
 
-type ConduitServiceImpl struct {
+type ConduitAppImpl struct {
 	Router *httprouter.Router
 	IsDev  bool
 }
 
-func (c *ConduitServiceImpl) Run() {
+func (c *ConduitAppImpl) Run() {
 	c.attachRoutes()
 	mqtt.RunServer()
 	c.startWebServer()
 }
 
-func (c *ConduitServiceImpl) attachRoutes() {
+func (c *ConduitAppImpl) attachRoutes() {
 	c.Router.GET("/api/send/:deviceName/:funcName", routes.AuthMiddlewareGenerator(routes.Send))
 	c.Router.GET("/api/streams/:deviceName/:streamName", routes.AuthMiddlewareGenerator(routes.GetStreamedMessages))
 	c.Router.POST("/api/auth", routes.Auth)
@@ -35,7 +35,7 @@ func (c *ConduitServiceImpl) attachRoutes() {
 	c.Router.ServeFiles("/static/*filepath", http.Dir("public/static"))
 }
 
-func (c *ConduitServiceImpl) startWebServer() {
+func (c *ConduitAppImpl) startWebServer() {
 	fmt.Printf("Web server to listen on port :%s", os.Getenv("PORT"))
 	if c.IsDev {
 		err := http.ListenAndServe(":"+os.Getenv("PORT"), c.Router)
@@ -48,8 +48,8 @@ func (c *ConduitServiceImpl) startWebServer() {
 
 }
 
-func NewConduitService() *ConduitServiceImpl {
-	return &ConduitServiceImpl{
+func NewConduitApp() *ConduitAppImpl {
+	return &ConduitAppImpl{
 		Router: httprouter.New(),
 		IsDev:  os.Getenv("DEV") == "TRUE",
 	}
