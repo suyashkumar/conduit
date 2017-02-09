@@ -27,7 +27,8 @@ func TestGetUser(t *testing.T) {
 	sampleEmail := "test@suyash.io"
 	samplePrefix := "myPrefix"
 	hc := routes.HomeAutoClaims{Email: sampleEmail, Prefix: samplePrefix}
-	routes.GetUser(w, req, nil, &hc)
+	context := routes.HandlerContext{}
+	routes.GetUser(w, req, nil, &context, &hc)
 	fmt.Println(w.Body.String())
 	var user routes.UserResponse
 	err := json.Unmarshal(w.Body.Bytes(), &user)

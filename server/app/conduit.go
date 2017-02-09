@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"github.com/suyashkumar/conduit/server/middleware"
 	"github.com/suyashkumar/conduit/server/mqtt"
 	"github.com/suyashkumar/conduit/server/routes"
 	"github.com/suyashkumar/conduit/server/secrets"
@@ -43,11 +44,11 @@ func (c *ConduitAppImpl) attachRoutes() {
 }
 
 func (c *ConduitAppImpl) WrapAuthHandler(next routes.AuthHandler) httprouter.Handle {
-	return routes.ConduitAuthMiddleware(next, c.context)
+	return middleware.ConduitAuthMiddleware(next, c.context)
 }
 
 func (c *ConduitAppImpl) WrapHandler(next routes.ConduitHandler) httprouter.Handle {
-	return routes.ConduitMiddleware(next, c.context)
+	return middleware.ConduitMiddleware(next, c.context)
 }
 
 func (c *ConduitAppImpl) startWebServer() {

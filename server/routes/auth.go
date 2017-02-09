@@ -62,47 +62,6 @@ type ConduitHandler func(
 	*HandlerContext,
 )
 
-func ConduitMiddleware(next ConduitHandler, c *HandlerContext) httprouter.Handle {
-	middleware := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		next(w, r, ps, c)
-	}
-
-	return middleware
-}
-
-func ConduitAuthMiddleware(next AuthHandler, c *HandlerContext) httprouter.Handle {
-
-	middleware := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		SetCorsHeaders(w)
-		if candidateToken, ok := r.Header["X-Access-Token"]; ok {
-			// Parse and validate token:
-			token, err := jwt.ParseWithClaims(candidateToken[0], &HomeAutoClaims{}, func(token *jwt.Token) (interface{}, error) {
-				return SecretKey, nil
-			})
-
-			if claims, ok := token.Claims.(*HomeAutoClaims); ok && token.Valid {
-				next(w, r, ps, c, claims)
-				return
-			} else {
-				returnError := ErrorResponse{Success: false, Error: err.Error()}
-				resBytes, _ := json.Marshal(returnError)
-				w.WriteHeader(401)
-				w.Header().Set("Content-Type", "application/json")
-				fmt.Fprintf(w, string(resBytes))
-				fmt.Println("there is error")
-				fmt.Println(err.Error())
-				return
-			}
-		}
-		// Either token wasn't valid or it wasn't provided
-		sendErrorResponse(w, "No Token", 400)
-		return
-	}
-
-	return middleware
-
-}
-
 func returnHash(password string) string {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
 	return string(hashedPassword)
@@ -130,7 +89,7 @@ func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
 	if err != nil {
-		sendErrorResponse(w, err.Error(), 400)
+		SendErrorResponse(w, err.Error(), 400)
 		return
 	}
 	u.Prefix = util.GetRandString(PREFIX_LENGTH)
@@ -140,7 +99,7 @@ func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *
 	c := session.DB("homeauto").C("users")
 	err = c.Insert(u)
 	if err != nil {
-		sendErrorResponse(w, err.Error(), 500)
+		SendErrorResponse(w, err.Error(), 500)
 	}
 	fmt.Fprintf(w, "DONE")
 }
@@ -155,7 +114,7 @@ func decodeUserFromRequest(r *http.Request) (models.User, error) {
 	return u, nil
 }
 
-func sendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
+func SendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
 	resBytes, err := json.Marshal(ErrorResponse{Success: false, Error: errorString})
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(errorCode)
@@ -175,7 +134,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, conte
 	}
 	jsonBytes, err := json.Marshal(u)
 	if err != nil {
-		sendErrorResponse(w, "Problem parsing user info json", 500)
+		SendErrorResponse(w, "Problem parsing user info json", 500)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonBytes))
@@ -186,7 +145,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
 	if err != nil {
-		sendErrorResponse(w, "Error: could not decode user. Did you POST with the proper user format? Full Error:"+err.Error(), 400)
+		SendErrorResponse(w, "Error: could not decode user. Did you POST with the proper user format? Full Error:"+err.Error(), 400)
 		return
 	}
 	session, err := mgo.Dial(secrets.DB_DIAL_URL)
@@ -200,7 +159,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 	c.Find(bson.M{"email": u.Email}).One(&candidate)
 	berr := bcrypt.CompareHashAndPassword([]byte(candidate.Password), []byte(u.Password))
 	if berr != nil {
-		sendErrorResponse(w, berr.Error(), 400)
+		SendErrorResponse(w, berr.Error(), 400)
 		return
 	} else {
 		claims := HomeAutoClaims{

@@ -47,7 +47,7 @@ func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 
 	})
 	timer := time.AfterFunc(3*time.Second, func() {
-		sendErrorResponse(w, "ERROR, no response from device", 504)
+		SendErrorResponse(w, "ERROR, no response from device", 504)
 		fmt.Fprintf(w, "ERROR")
 		end <- "done"
 	})
