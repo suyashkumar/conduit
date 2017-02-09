@@ -68,6 +68,7 @@ func NewConduitApp() *ConduitAppImpl {
 	if err != nil {
 		panic(err)
 	}
+
 	return &ConduitAppImpl{
 		Router: httprouter.New(),
 		AppConfig: AppConfig{

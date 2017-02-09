@@ -135,10 +135,7 @@ func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *
 	}
 	u.Prefix = util.GetRandString(PREFIX_LENGTH)
 	u.Password = returnHash(u.Password)
-	session, err := mgo.Dial(secrets.DB_DIAL_URL)
-	if err != nil {
-		panic(err)
-	}
+	session := context.DbSession.New()
 	defer session.Close()
 	c := session.DB("homeauto").C("users")
 	err = c.Insert(u)
