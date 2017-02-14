@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	topicName := prefixedName + "/stream/" + ps.ByName("streamName")
 
 	var results []models.StreamMessage
-	err = c.Find(bson.M{"topic": topicName}).All(&results)
+	err := c.Find(bson.M{"topic": topicName}).All(&results)
 	if err != nil {
 		panic(err)
 	}
