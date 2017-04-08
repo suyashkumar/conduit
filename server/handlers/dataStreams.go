@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
 	"gopkg.in/mgo.v2/bson"
-	"net/http"
 )
 
 func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
@@ -21,7 +22,7 @@ func GetStreamedMessages(w http.ResponseWriter, r *http.Request, ps httprouter.P
 	var results []models.StreamMessage
 	err := c.Find(bson.M{"topic": topicName}).All(&results)
 	if err != nil {
-		panic(err)
+		SendErrorResponse(w, err.Error(), 500)
 	}
 	resBytes, _ := json.Marshal(results)
 	w.Header().Set("Content-Type", "application/json")

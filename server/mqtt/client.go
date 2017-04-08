@@ -82,7 +82,7 @@ func getPublishCallback(m map[string]func(string, string)) func(MQTT.Client, MQT
 func persistMessage(message string, topic string) {
 	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
-		panic(err)
+		fmt.Println("ERROR Connecting to the database.", err)
 	}
 	defer session.Close()
 
@@ -93,7 +93,7 @@ func persistMessage(message string, topic string) {
 		Topic:     topic,
 	})
 	if err != nil {
-		panic(err)
+		fmt.Println("ERROR inserting StreamMessage to database.", err)
 	}
 }
 

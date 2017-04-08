@@ -3,6 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
@@ -11,8 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"net/http"
-	"time"
 )
 
 var SecretKey = []byte(secrets.SECRET)
@@ -134,7 +135,7 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, jerr := token.SignedString(SecretKey)
 		if jerr != nil {
-			panic(jerr)
+			SendErrorResponse(w, jerr.Error(), 500)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		resBytes, _ := json.Marshal(TokenResponse{Success: true, Token: tokenString})
