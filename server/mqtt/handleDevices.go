@@ -22,10 +22,11 @@ func Register(name string, f func(string, string)) {
 
 func DeRegister(name string) error {
 	_, ok := handlerMap[name]
+	// Mostly just a sanity check for callers:
 	if !ok {
 		return errors.New("Name never registered")
 	}
-	handlerMap[name] = nil
+	delete(handlerMap, name)
 	return nil
 }
 
