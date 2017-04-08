@@ -1,21 +1,32 @@
 package mqtt
 
 import (
+	"errors"
 	"fmt"
+	"os"
+	"regexp"
+	"time"
+
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/surgemq/message"
 	"github.com/suyashkumar/conduit/server/secrets"
 	"github.com/suyashkumar/surgemq/service"
-	"os"
-	"regexp"
-	"time"
 )
 
 var phaoClient MQTT.Client
 var handlerMap = make(map[string]func(string, string))
 
-func Register(name string, a func(string, string)) {
-	handlerMap[name] = a
+func Register(name string, f func(string, string)) {
+	handlerMap[name] = f
+}
+
+func DeRegister(name string) error {
+	_, ok := handlerMap[name]
+	if !ok {
+		return errors.New("Name never registered")
+	}
+	handlerMap[name] = nil
+	return nil
 }
 
 var LOGGING = (os.ExpandEnv("LOGGING") != "")

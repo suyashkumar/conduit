@@ -15,20 +15,18 @@ type RpcResponse struct {
 	Data    string `json:"data"`
 }
 
+//TODO: this should be in a name transforms package
 func PrefixedName(deviceName string, prefix string) string {
 	return prefix + deviceName
 }
 
 func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
-	if r.Method == "OPTIONS" {
-		fmt.Println("OPT")
-		return
-	}
+
 	prefixedName := PrefixedName(ps.ByName("deviceName"), hc.Prefix)
 
 	mqtt.SendMessage(prefixedName, ps.ByName("funcName"))
-	c := make(chan string)
-	end := make(chan string)
+
+	c := make(chan string) 
 
 	mqtt.Register(prefixedName+"/device", func(topic string, payload string) {
 		defer func() {
@@ -46,22 +44,22 @@ func Send(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 		c <- "done"
 
 	})
-	timer := time.AfterFunc(3*time.Second, func() {
-		SendErrorResponse(w, "ERROR, no response from device", 504)
-		fmt.Fprintf(w, "ERROR")
-		end <- "done"
-	})
+
+	timeout := time.After(3 * time.Second)
+
 	select {
 	case <-c:
-		fmt.Println("got device response closing")
-		timer.Stop()
-		close(c)
-		close(end)
-		return
-	case <-end:
-		fmt.Println("Timer up closing")
-		close(c)
-		close(end)
-		return
+		// Got device response! Do nothing, move on
+		fmt.Printf("Got device %s response", ps.ByName("deviceName"))
+	case <-timeout:
+		// Timed out!
+		SendErrorResponse(w, "ERROR, no response from device", 504) 
+		fmt.Println("Timeout waiting for response from device") 
+	}
+
+	// Cleanup: 
+	err := mqtt.DeRegister(prefixedName+"/device")
+	if err != nil {
+		fmt.Println("Issues deregistering device message listener")
 	}
 }
