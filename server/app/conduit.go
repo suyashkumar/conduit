@@ -65,6 +65,7 @@ func (c *ConduitAppImpl) startWebServer() {
 }
 
 func NewConduitApp() *ConduitAppImpl {
+	// Init DB Session
 	session, err := mgo.Dial(secrets.DB_DIAL_URL)
 	if err != nil {
 		panic(err)

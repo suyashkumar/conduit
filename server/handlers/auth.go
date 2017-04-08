@@ -3,6 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 	"github.com/suyashkumar/conduit/server/models"
@@ -11,8 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"net/http"
-	"time"
 )
 
 var SecretKey = []byte(secrets.SECRET)
@@ -62,29 +63,8 @@ type ConduitHandler func(
 	*HandlerContext,
 )
 
-func returnHash(password string) string {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
-	return string(hashedPassword)
-}
-
-func ListUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	session, err := mgo.Dial(secrets.DB_DIAL_URL)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-	c := session.DB("homeauto").C("users")
-
-	var results []models.User
-	err = c.Find(bson.M{}).All(&results)
-	if err != nil {
-		panic(err)
-	}
-	resBytes, _ := json.Marshal(results)
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, string(resBytes))
-}
-
+// Handler to create a new conduit user in the database, along with
+// a generated private Prefix
 func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext) {
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
@@ -104,27 +84,8 @@ func New(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *
 	fmt.Fprintf(w, "DONE")
 }
 
-func decodeUserFromRequest(r *http.Request) (models.User, error) {
-	u := models.User{}
-	err := json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
-		return u, err
-	}
-	// TODO: Add validation
-	return u, nil
-}
-
-func SendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
-	resBytes, err := json.Marshal(ErrorResponse{Success: false, Error: errorString})
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(errorCode)
-	fmt.Fprintf(w, string(resBytes))
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
+// Handler to return user information stored inside a
+// JSON Web Token
 func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext, hc *HomeAutoClaims) {
 	u := UserResponse{
 		Success: true,
@@ -138,9 +99,10 @@ func GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, conte
 	}
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprintf(w, string(jsonBytes))
-
 }
 
+// Handler to authenticate users to conduit and issue them
+// a JSON Web Token if successful
 func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context *HandlerContext) {
 	SetCorsHeaders(w)
 	u, err := decodeUserFromRequest(r)
@@ -173,10 +135,36 @@ func Auth(w http.ResponseWriter, r *http.Request, ps httprouter.Params, context 
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, jerr := token.SignedString(SecretKey)
 		if jerr != nil {
-			panic(jerr)
+			SendErrorResponse(w, jerr.Error(), 500)
 		}
 		w.Header().Set("Content-Type", "application/json")
 		resBytes, _ := json.Marshal(TokenResponse{Success: true, Token: tokenString})
 		fmt.Fprintf(w, string(resBytes))
 	}
+}
+
+func decodeUserFromRequest(r *http.Request) (models.User, error) {
+	u := models.User{}
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		return u, err
+	}
+	// TODO: Add validation
+	return u, nil
+}
+
+func returnHash(password string) string {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
+	return string(hashedPassword)
+}
+
+func SendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
+	resBytes, err := json.Marshal(ErrorResponse{Success: false, Error: errorString})
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(errorCode)
+	fmt.Fprintf(w, string(resBytes))
+	if err != nil {
+		return err
+	}
+	return nil
 }
