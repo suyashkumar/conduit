@@ -28,7 +28,7 @@ type Config struct {
 	DBDialURL string
 }
 
-func New(c Config) (*app, error) {
+func New(c Config) (App, error) {
 	// Initialize DB Session
 	session, err := mgo.Dial(c.DBDialURL)
 	if err != nil {
