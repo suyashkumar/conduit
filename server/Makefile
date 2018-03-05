@@ -10,6 +10,11 @@ build:
 test:
 	go test ./...
 
+.PHONY: run
+run:
+	make build
+	./${BINARY}
+
 .PHONY: release
 release:
 	glide install
