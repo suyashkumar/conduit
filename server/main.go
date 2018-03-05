@@ -6,18 +6,16 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/suyashkumar/conduit/server/config"
+	"github.com/suyashkumar/conduit/server/device"
 	"github.com/suyashkumar/conduit/server/log"
 	"github.com/suyashkumar/conduit/server/routes"
-	"github.com/suyashkumar/conduit/server/sockets"
 )
 
 func main() {
 	log.Configure()
 
-	r := routes.Build()
-	s := sockets.Build()
-
-	r.Handler("GET", "/socket.io/", s)
+	d := device.NewHandler()
+	r := routes.Build(d)
 
 	p := fmt.Sprintf(":%s", config.Get(config.Port))
 
