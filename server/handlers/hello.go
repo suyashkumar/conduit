@@ -9,6 +9,6 @@ import (
 )
 
 func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device.Handler) {
-	d.Call("Suyash", "ID", "myFunc")
+	d.Call("suyash", "a", "ledToggle")
 	fmt.Fprintf(w, "Hello, world")
 }
