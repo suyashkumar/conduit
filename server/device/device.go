@@ -35,7 +35,7 @@ func NewHandler() Handler {
 }
 
 func getRoomName(deviceName, deviceID string) string {
-	return fmt.Sprintf("%s_%s", deviceName, deviceID)
+	return fmt.Sprintf("%s_%s", deviceID, deviceName)
 }
 
 func (h *handler) Call(deviceName, deviceID, functionName string) {
