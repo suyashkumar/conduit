@@ -27,6 +27,7 @@ func NewHandler() Handler {
 	// Attach socket event handlers
 	s.On("hello", onHello)
 	s.On(gosocketio.OnConnection, onConnection)
+	s.On("api_key", onAPIKeyReceive)
 
 	globalDeviceHandler = &handler{
 		server: s,
