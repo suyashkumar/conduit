@@ -1,5 +1,6 @@
 # conduit
 :eyes:NOTE: conduit is going through a ground-up re-write on the [conduit-v2-master](https://github.com/suyashkumar/conduit/tree/conduit-v2-master) branch! :eyes:
+
 <a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a>
 
 [Conduit featured on Hackaday!](http://hackaday.com/2017/01/17/servo-controlled-iot-light-switches/)
