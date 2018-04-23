@@ -17,6 +17,7 @@ import (
 	sec "github.com/suyashkumar/conduit/secret"
 )
 
+// Register allows a new user to create an account with Conduit
 func Register(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device.Handler, db db.Handler, a auth.Authenticator) {
 	req := entities.RegisterRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -52,6 +53,7 @@ func Register(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d de
 	sendOK(w)
 }
 
+// Login allows the user to authenticate with conduit and get a freshly minted JWT
 func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device.Handler, db db.Handler, a auth.Authenticator) {
 	req := entities.LoginRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -85,7 +87,7 @@ func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d devic
 	// Get Token for user
 	token, err := a.GetToken(req.Email, req.Password, &auth.GetTokenOpts{
 		RequestedPermissions: auth.PERMISSIONS_USER,
-		Data:                 auth.TokenData{"accountSecret": secret.Secret},
+		Data:                 auth.TokenData{ACCOUNT_SECRET_KEY: secret.Secret},
 	})
 
 	if err != nil {
@@ -96,6 +98,7 @@ func Login(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d devic
 	sendJSON(w, res, 200)
 }
 
+// Call allows a user to issue an RPC to one of their devices and optionally get a response from the device
 func Call(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device.Handler, db db.Handler, a auth.Authenticator) {
 	req := entities.CallRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -127,7 +130,7 @@ func Call(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device
 		return
 	}
 
-	c := d.Call(req.DeviceName, claims.Data["accountSecret"], req.FunctionName, req.WaitForDeviceResponse)
+	c := d.Call(req.DeviceName, claims.Data[ACCOUNT_SECRET_KEY], req.FunctionName, req.WaitForDeviceResponse)
 
 	if req.WaitForDeviceResponse {
 		select {
@@ -147,4 +150,40 @@ func Call(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device
 	} else {
 		sendOK(w)
 	}
+}
+
+// UserInfo returns information to the user about their account, including their current account secret
+func UserInfo(w http.ResponseWriter, r *http.Request, ps httprouter.Params, d device.Handler, db db.Handler, a auth.Authenticator) {
+	req := entities.UserInfoRequest{}
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		logrus.WithError(err).Error("Could not parse CallRequest")
+		err := sendJSON(w, entities.ErrorResponse{Error: "Could not parse CallRequest"}, 400)
+		if err != nil {
+			logrus.WithError(err).Error("!!!! Could not send error JSON response (CallRequest)")
+		}
+		return
+	}
+
+	// Authenticate User. TODO: factor out
+	claims, err := a.Validate(req.Token)
+	if err == auth.ErrorValidatingToken {
+		logrus.WithField("token", req.Token).Info("Error validating token")
+		err := sendJSON(w, entities.ErrorResponse{Error: "Error validating token"}, 401)
+		if err != nil {
+			logrus.WithError(err).Error("!!!! Could not send error JSON response (UserInfoRequest)")
+		}
+		return
+	}
+	if err != nil {
+		logrus.WithError(err).Error("Unknown error validating token")
+		err := sendJSON(w, entities.ErrorResponse{Error: "Error validating token"}, 500)
+		if err != nil {
+			logrus.WithError(err).Error("!!!! Could not send error JSON response")
+		}
+		return
+	}
+
+	sendJSON(w, entities.UserInfoResponse{AccountSecret: claims.Data[ACCOUNT_SECRET_KEY]}, 200)
+
 }
