@@ -32,32 +32,34 @@ A central conduit API server is already deployed at https://api.conduit.suyash.i
 ## Minimal Example
 Below is a minimal example of firmware code needed to get started with Conduit to blink an LED. See the next section for a complete example. 
 ```C
-#include <Arduino.h> 
+#include <Arduino.h>
 #include <Conduit.h>
 
 #define LED D0
 
-const char* ssid = "ssid";
-const char* password = "password";
+const char* ssid = ""; // wifi ssid
+const char* password = ""; // wifi password
+const char* device_name = ""; // you pick this! IDentifier for your device
+const char* server_url = "api.conduit.suyash.io"; // location of the API server
+const char* account_secret = ""; // register and call /api/user_info to get this
 
-Conduit conduit("myDeviceName", "api.conduit.suyash.io", "my-conduit-account-secret");
+Conduit conduit(device_name, server_url, account_secret);
 int ledStatus = 0;
 
 int ledToggle(RequestParams *rq){
   digitalWrite(LED, (ledStatus) ? HIGH : LOW); // LED is on when LOW
   ledStatus = (ledStatus) ? 0 : 1;
-  conduit.sendResponse(rq, (ledStatus) ? "ON":"OFF"); // send response to conduit
+  Serial.println(rq->request_uuid);
+  conduit.sendResponse(rq, (ledStatus) ? "ON":"OFF");
 }
-
 
 void setup(void){
   Serial.begin(115200); // Start serial
-  pinMode(LED, OUTPUT); // Set LED pin to output
   digitalWrite(LED, HIGH);
 
   conduit.startWIFI(ssid, password); // Config/start wifi
   conduit.init();
-  conduit.addHandler("ledToggle", &ledToggle); // register ledToggle as "ledToggle" with Conduit
+  conduit.addHandler("ledToggle", &ledToggle);
 
 }
 
