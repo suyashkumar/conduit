@@ -20,7 +20,7 @@ A central conduit API server is already deployed at https://api.conduit.suyash.i
 | Method | Route          | Sample Request                                                                                                                           | Notes                                                                                                                     |
 |--------|----------------|------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | POST   | /api/login     | ``` {   "email": "test@test.com",   "password": "test" }  ```                                                                            | Authenticate with Conduit, get issued a JWT                                                                               |
-| POST   | /api/send      | ```{"token": "JWT token from login", "device_name": "myDeviceName", "function_name": "ledToggle", "wait_for_device_response": "true"}``` | Call a function (ledToggle) on one of your ESP8266 devices (named "myDeviceName" here)!                                   |
+| POST   | /api/call      | ```{"token": "JWT token from login", "device_name": "myDeviceName", "function_name": "ledToggle", "wait_for_device_response": "true"}``` | Call a function (ledToggle) on one of your ESP8266 devices (named "myDeviceName" here)!                                   |
 | POST   | /api/user_info | ```{"token": "JWT token from login"}```                                                                                                  | This returns information about your user account, including your account  secret which you must include in your firmware. |
 
 
@@ -67,15 +67,14 @@ void loop(void){
 ```
 
 and now you can call `ledToggle` on that device from anywhere in the world with:
-  * POST https://api.conduit.suyash.io/api/send with the following JSON body:
-    ```json
-    {
-      "token": "<your_jwt_token_here>",
-      "device_name": "myDeviceName", 
-      "function_name": "ledToggle",
-      "wait_for_device_response": "true"
-    }
-    ```
+
+POST https://api.conduit.suyash.io/api/call:
+
+```sh
+curl 'https://api.conduit.suyash.io/api/call' \
+-H 'content-type: application/json;charset=UTF-8'  \
+--data-binary '{"token":"your_login_token","device_name":"suyash","function_name":"ledToggle","wait_for_device_response":true}' --compressed
+ ```
 
 Conduit is currently in active development, so please feel free to contact me with comments/questions and submit pull requests!
 
@@ -111,9 +110,26 @@ const char* account_secret = "";
   ```sh
   platformio run --target upload
   ```
-  NOTE: to properly upload to an ESP8266 chip, you must have installed the ESP8266 drivers on your system already.
+  NOTE: to properly upload to an ESP8266 chip, you must have installed the [ESP8266 drivers](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx) on your system already.
 
-6. You should be set! You can now go to the conduit interact view (https://conduit.suyash.io/#/interact) and type in your device name (that you chose in step 4) and `ledToggle` as the function and hit "Execute!" to see your LED on your device toggle! Note that because we're using the built-in LED the on/off statuses are reversed (LED is on when D0 is low), but with your own LED things should be normal!
+6. You should be set! You can now go to the conduit interact view (https://conduit.suyash.io/#/interact) and type in your device name (that you chose in step 4) and `ledToggle` as the function and hit "Execute!" to see your LED on your device toggle! You can also issue RESTful API requests to conduit to trigger functions on your device from any app that you build. To call `ledToggle`
+
+### Call RESTful APIs to trigger ESP8266 Functions: 
+1) Get your login token by authenticating
+POST https://api.conduit.suyash.io/api/login:
+   ```sh
+   curl 'https://api.conduit.suyash.io/api/login' \
+   -H 'content-type: application/json;charset=UTF-8'  \
+   --data-binary '{"email":"YOUR_EMAIL", "password":"YOUR_PASSWORD"}' --compressed
+    ```
+
+2) POST https://api.conduit.suyash.io/api/call:
+
+   ```sh
+   curl 'https://api.conduit.suyash.io/api/call' \
+   -H 'content-type: application/json;charset=UTF-8'  \
+   --data-binary '{"token":"YOUR_LOGIN_TOKEN","device_name":"YOUR_DEVICE_NAME","function_name":"ledToggle","wait_for_device_response":true}' --compressed
+    ```
 
 ## License 
 Copyright (c) 2018 Suyash Kumar
