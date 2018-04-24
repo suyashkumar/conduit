@@ -1,7 +1,7 @@
 # conduit
 :eyes:Conduit V2 was just realeased! :eyes:
 
-<a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a>
+<a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a> [![Go Report Card](https://goreportcard.com/badge/github.com/suyashkumar/conduit)](https://goreportcard.com/report/github.com/suyashkumar/conduit)
 
 [Conduit featured on Hackaday!](http://hackaday.com/2017/01/17/servo-controlled-iot-light-switches/)
 
