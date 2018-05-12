@@ -91,7 +91,7 @@ POST https://api.conduit.suyash.io/api/login:
 Conduit is currently in active development, so please feel free to contact me with comments/questions and submit pull requests!
 
 ## Bink an LED from the Cloud (full example).
-Controlling an LED on the ESP8266 from the Cloud takes less than 5 minutes with Conduit. 
+Controlling an LED on the ESP8266 from the Cloud takes less than 5 minutes with Conduit. Example firmware code to go along with this tutorial can be found [here](https://github.com/suyashkumar/conduit-firmware-library/tree/master/examples/basic_functionality) 
 
 Please make sure you've installed the relevant drivers ([here](https://www.silabs.com/products/mcu/Pages/USBtoUARTBridgeVCPDrivers.aspx) if you're using the nodemcu ESP8266 chip linked above) and installed the [platformio](http://docs.platformio.org/en/latest/installation.html) build system (simply `brew install platformio` if you're on a mac).
 
