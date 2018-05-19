@@ -24,10 +24,16 @@ A central conduit API server is already deployed at https://api.conduit.suyash.i
 | POST   | /api/user_info | ```{"token": "JWT token from login"}```                                                                                                  | This returns information about your user account, including your account  secret which you must include in your firmware. |
 
 
-## Sample Application using Conduit
-[smart-lights](https://github.com/suyashkumar/smart-lights) is a sample project that uses v1 of this this library to switch lights from the cloud. It currently uses v1 of this library and should be updated to v2 shortly. 
+## Sample Applications using Conduit
+Below are some sample applications that have used conduit in the past (and are in the process of being upgraded to Conduit v2 if they haven't been already). 
 
-![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif)
+
+| ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif) | ![](https://github.com/ouwen/remote/blob/master/documentation/remote_click.gif) |
+| ----                                                                           |   ----    |
+| [smart-lights](https://github.com/suyashkumar/smart-lights) uses v1 of this library to switch room lights from the cloud | [Remote](https://github.com/Ouwen/remote) by [Ouwen](https://github.com/Ouwen) uses conduit to easily control a Legget & Pratt remote from the cloud |
+
+
+
 
 ## Minimal Example
 Below is a minimal example of firmware code needed to get started with Conduit to blink an LED. See the next section for a complete example. 
