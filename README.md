@@ -5,7 +5,7 @@
 
 [Conduit featured on Hackaday!](http://hackaday.com/2017/01/17/servo-controlled-iot-light-switches/)
 
-Conduit is an entirely open-source web service that allows you to quickly and easily call functions on your [ESP8266 IoT devices](https://www.amazon.com/HiLetgo-Version-NodeMCU-Internet-Development/dp/B010O1G1ES/ref=sr_1_3?ie=UTF8&qid=1483953570&sr=8-3&keywords=nodemcu+esp8266) from anywhere in the world (even if those devices are behind private networks). 
+Conduit is an entirely open-source web service that allows you to securely control and interface with fleets of [ESP8266-based IoT devices](https://www.amazon.com/HiLetgo-Version-NodeMCU-Internet-Development/dp/B010O1G1ES/ref=sr_1_3?ie=UTF8&qid=1483953570&sr=8-3&keywords=nodemcu+esp8266) from anywhere in the world (even if those devices themselves don't have public or static IP addresses). Conduit offers a centralized RESTful API to do things like eaisly execute arbitrary firmware functions on your device or receive data from your device(s). You can use the already [deployed service](https://conduit.suyash.io) or spin up your own instance (useful if you want to ensure all of your infrastructure stays behind a private network--say a hospital network). 
 
 You can do all this simply by dropping in a few lines of code into your firmware and then issuing RESTful API requests to the conduit web service to call your firmware functions. Skip ahead to a [full minimal example](README.md/#bink-an-led-from-the-cloud-full-example) if you're ready to get started right away!
 
