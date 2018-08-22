@@ -2,7 +2,7 @@
 
 <a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a> [![Go Report Card](https://goreportcard.com/badge/github.com/suyashkumar/conduit)](https://goreportcard.com/report/github.com/suyashkumar/conduit)
 
-#### Call firmware functions from the cloud 
+#### Call firmware functions from the cloud.
 
 | ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif) | ![](https://github.com/ouwen/remote/blob/master/documentation/remote_click.gif) |
 | ----                                                                           |   ----    |
