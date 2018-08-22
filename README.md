@@ -1,9 +1,14 @@
 # conduit
-:eyes:Conduit V2 was just realeased! :eyes:
 
 <a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a> [![Go Report Card](https://goreportcard.com/badge/github.com/suyashkumar/conduit)](https://goreportcard.com/report/github.com/suyashkumar/conduit)
 
 [Conduit featured on Hackaday!](http://hackaday.com/2017/01/17/servo-controlled-iot-light-switches/)
+
+| ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif) | ![](https://github.com/ouwen/remote/blob/master/documentation/remote_click.gif) |
+| ----                                                                           |   ----    |
+| [smart-lights](https://github.com/suyashkumar/smart-lights) uses v1 of this library to switch room lights from the cloud | [Remote](https://github.com/Ouwen/remote) by [Ouwen](https://github.com/Ouwen) uses conduit to easily control a Legget & Pratt remote from the cloud |
+
+
 
 Conduit is an entirely open-source web service that allows you to securely control and interface with fleets of [ESP8266-based IoT devices](https://www.amazon.com/HiLetgo-Version-NodeMCU-Internet-Development/dp/B010O1G1ES/ref=sr_1_3?ie=UTF8&qid=1483953570&sr=8-3&keywords=nodemcu+esp8266) from anywhere in the world (even if those devices themselves don't have public or static IP addresses). Conduit offers a centralized RESTful API to do things like eaisly execute arbitrary firmware functions on your device or receive data from your device(s). You can use the already [deployed service](https://conduit.suyash.io) or spin up your own instance (useful if you want to ensure all of your infrastructure stays behind a private network--say a hospital network). 
 
@@ -22,17 +27,6 @@ A central conduit API server is already deployed at https://api.conduit.suyash.i
 | POST   | /api/login     | ``` {   "email": "test@test.com",   "password": "test" }  ```                                                                            | Authenticate with Conduit, get issued a JWT                                                                               |
 | POST   | /api/call      | ```{"token": "JWT token from login", "device_name": "myDeviceName", "function_name": "ledToggle", "wait_for_device_response": "true"}``` | Call a function (ledToggle) on one of your ESP8266 devices (named "myDeviceName" here)!                                   |
 | POST   | /api/user_info | ```{"token": "JWT token from login"}```                                                                                                  | This returns information about your user account, including your account  secret which you must include in your firmware. |
-
-
-## Sample Applications using Conduit
-Below are some sample applications that have used conduit in the past (and are in the process of being upgraded to Conduit v2 if they haven't been already). 
-
-
-| ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif) | ![](https://github.com/ouwen/remote/blob/master/documentation/remote_click.gif) |
-| ----                                                                           |   ----    |
-| [smart-lights](https://github.com/suyashkumar/smart-lights) uses v1 of this library to switch room lights from the cloud | [Remote](https://github.com/Ouwen/remote) by [Ouwen](https://github.com/Ouwen) uses conduit to easily control a Legget & Pratt remote from the cloud |
-
-
 
 
 ## Minimal Example
