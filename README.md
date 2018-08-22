@@ -1,15 +1,14 @@
 # conduit
 
-
 <a href="https://travis-ci.org/suyashkumar/conduit" target="_blank"><img src="https://travis-ci.org/suyashkumar/conduit.svg?branch=master" /></a> [![Go Report Card](https://goreportcard.com/badge/github.com/suyashkumar/conduit)](https://goreportcard.com/report/github.com/suyashkumar/conduit)
 
-#### Call firmware functions from the cloud.
+#### Call firmware functions from the cloud 
 
 | ![](https://github.com/suyashkumar/smart-lights/blob/master/img/lightswitch.gif) | ![](https://github.com/ouwen/remote/blob/master/documentation/remote_click.gif) |
 | ----                                                                           |   ----    |
-| [smart-lights](https://github.com/suyashkumar/smart-lights) uses v1 of this library to switch room lights from the cloud | [Remote](https://github.com/Ouwen/remote) by [Ouwen](https://github.com/Ouwen) uses conduit to easily control a Legget & Pratt remote from the cloud |
+| [smart-lights](https://github.com/suyashkumar/smart-lights) uses conduit v1 to switch room lights from the cloud | [Remote](https://github.com/Ouwen/remote) by [Ouwen](https://github.com/Ouwen) uses conduit to easily control a Legget & Pratt remote from the cloud |
 
-
+---
 
 Conduit is an entirely open-source web service that allows you to securely control and interface with fleets of [ESP8266-based IoT devices](https://www.amazon.com/HiLetgo-Version-NodeMCU-Internet-Development/dp/B010O1G1ES/ref=sr_1_3?ie=UTF8&qid=1483953570&sr=8-3&keywords=nodemcu+esp8266) from anywhere in the world (even if those devices themselves don't have public or static IP addresses). Conduit offers a centralized RESTful API to do things like eaisly execute arbitrary firmware functions on your device or receive data from your device(s). You can use the already [deployed service](https://conduit.suyash.io) or spin up your own instance (useful if you want to ensure all of your infrastructure stays behind a private network--say a hospital network). 
 
